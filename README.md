@@ -24,6 +24,8 @@ Questions or trouble enrolling? Email **[gabla@palomar.edu](mailto:gabla@palomar
 
 ---
 
+> 📄 **Promote the course:** printable flyer → **[CSCI250-Flyer-Fall2026.pdf](CSCI250-Fall2026/flyer/CSCI250-Flyer-Fall2026.pdf)**
+
 ## 📖 About this course
 CSCI 250 is a **16-week, project-based** introduction to Artificial Intelligence for second-year students. You'll move from Python and classical machine learning to the technologies behind today's AI: **neural networks, Large Language Models (LLMs), Generative AI, retrieval-augmented generation (RAG), AI agents, and AI-assisted software development.**
 
