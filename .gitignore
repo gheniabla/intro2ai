@@ -1,0 +1,23 @@
+# ─── Never publish: privacy ───────────────────────────────
+# Canvas course export (may contain non-public material / instructor solutions)
+.canvas_export/
+*.imscc
+# Private instructor planning notes
+instructor.md
+CSCI250-Fall2026/instructor.md
+# Anything obviously personal or roster/grade related (safety net)
+*roster*
+*grades*
+*students*
+
+# ─── Source docs not needed in the repo ───────────────────
+/Acad-Cal-*.pdf
+
+# ─── Python / build / OS cruft ────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+**/_selftest.*
+.DS_Store
+.venv/
