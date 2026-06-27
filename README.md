@@ -11,6 +11,12 @@
 ![Modality](https://img.shields.io/badge/Format-Online%20%C2%B7%20Async-128C8C)
 ![Cost](https://img.shields.io/badge/Student%20Cost-%240-2E8B57)
 
+<br>
+
+<img src="assets/qr-intro2ai.png" alt="QR code linking to github.com/gheniabla/intro2ai" width="160" />
+
+📱 **Scan to open this course repo** · **https://github.com/gheniabla/intro2ai**
+
 </div>
 
 ---
@@ -51,17 +57,6 @@ intro2ai/
     ├── tools/              # slidegen.py · nbgen.py · eval_utils.py (build & eval helpers)
     └── course-design/      # design rationale + sources
 ```
-
-## 📱 Scan to open this repo
-<div align="center">
-
-<img src="assets/qr-intro2ai.png" alt="QR code linking to github.com/gheniabla/intro2ai" width="180" />
-
-**https://github.com/gheniabla/intro2ai**
-
-</div>
-
----
 
 ## ✅ How this course is designed for quality
 Benchmarked against well-regarded courses (Stanford CS224N/CS336, Karpathy's Zero-to-Hero, DeepLearning.AI, Hugging Face, Berkeley LLM-Agents, fast.ai) and evidence-based online-teaching practice (Quality Matters, UDL). Highlights: **signature from-scratch labs**, **evaluation as a throughline** (LLM-as-judge), a **single capstone upgraded all term**, "wow-in-5-minutes" notebooks with cost banners, and **rubrics + exemplars** on every graded item. See [Design Notes & Sources](CSCI250-Fall2026/course-design/Design-Notes-and-Sources.md).
