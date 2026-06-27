@@ -52,7 +52,7 @@ llm_concepts = [
              "    print('     pieces:', pieces)\n"),
     ("md", "**Rule of thumb:** 1 token ≈ 4 characters ≈ 0.75 words. Notice the rare word "
            "splits into several tokens.\n\n"
-           "**Task (S1):** add three strings of your own above and predict the token count "
+           "**Task (A7):** add three strings of your own above and predict the token count "
            "before you run it."),
 
     ("md", "## 2. Exact token counting with Claude\n"
@@ -113,7 +113,7 @@ llm_concepts = [
              "    for o in ask(P, 1.0): print('  -', o)\n"
              "except Exception as e:\n"
              "    print('Set ANTHROPIC_API_KEY to run this cell:', e)"),
-    ("md", "**Task (S1):** describe in 2–3 sentences how the temp-0 and temp-1 outputs "
+    ("md", "**Task (A7):** describe in 2–3 sentences how the temp-0 and temp-1 outputs "
            "differed. When would you want each?"),
 
     ("md", "## 5. In-context learning (zero-shot vs few-shot)\n"
@@ -142,7 +142,7 @@ llm_concepts = [
              "    print(m.content[0].text)\n"
              "except Exception as e:\n"
              "    print('Set ANTHROPIC_API_KEY to run this cell:', e)"),
-    ("md", "**Task (S1):** craft your **own** trap prompt that yields a confident but false "
+    ("md", "**Task (A7):** craft your **own** trap prompt that yields a confident but false "
            "answer. Paste the output and write 2–3 sentences on *why* it happened and how "
            "you would mitigate it (temperature=0, ask for sources, RAG, tools, verify)."),
 
@@ -240,7 +240,7 @@ compare = [
              "except Exception as e:\n"
              "    print('Ollama not running yet:', e)"),
 
-    ("md", "## 6. Compare (fill this in for S1)\n"
+    ("md", "## 6. Compare (fill this in for A7)\n"
            "| Model | Length | Tone | Correct? | Speed (s) |\n"
            "|---|---|---|---|---|\n"
            "| Claude (claude-sonnet-4-6) |  |  |  |  |\n"

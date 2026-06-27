@@ -13,7 +13,7 @@ slides = [
         "Prompt for code: context, constraints, acceptance criteria",
         "Review, test, and secure AI-generated code",
         "A sane git workflow + when AI helps vs. hurts",
-        "Lab A6: finish a TESTED feature with AI help"]},
+        "Lab A9: finish a TESTED feature with AI help"]},
 
     {"type": "section", "title": "From Autocomplete to Agents"},
     {"type": "two_col", "title": "Three Kinds of AI Help",
@@ -84,7 +84,7 @@ slides = [
         "Open code/starter_repo — run pytest, see failing tests",
         "Plan with the AI, then implement best_price",
         "Make tests green; add one edge-case test of your own",
-        "Submit Lab A6 + reflection by Sunday 11:59 PM PT"]},
+        "Submit Lab A9 + reflection by Sunday 11:59 PM PT"]},
 ]
 
 if __name__ == "__main__":

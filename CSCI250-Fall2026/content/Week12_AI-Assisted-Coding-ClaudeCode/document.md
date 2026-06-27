@@ -12,9 +12,9 @@ By the end of this week you will be able to:
 4. **Review, test, and secure** AI-generated code — treat the AI as a fast junior developer whose work you must verify.
 5. Use a sane **git workflow** with AI: small commits, branches, diffs you actually read.
 6. Judge **when AI helps vs. when it hurts**, and disclose AI use honestly.
-7. Complete a **tested feature** in a small starter repo with AI help (Lab A6).
+7. Complete a **tested feature** in a small starter repo with AI help (Lab A9).
 
-> **Time budget:** ~10 hours this week (lecture + slides + notebook + Lab A6).
+> **Time budget:** ~10 hours this week (lecture + slides + notebook + Lab A9).
 
 ---
 
@@ -164,7 +164,7 @@ python -m pytest -q          # all green when you're done
 
 ---
 
-## 8. Lab — Assignment A6 (due Sunday 11:59 PM PT)
+## 8. Lab — Assignment A9 (due Sunday 11:59 PM PT)
 **Goal:** complete a *tested* feature using an AI coding assistant, and reflect on the process.
 
 1. Clone/open `code/starter_repo/`. Run `python -m pytest -q` and confirm the `best_price` tests **fail**.
@@ -176,9 +176,9 @@ python -m pytest -q          # all green when you're done
 
 **Submit:** your completed `starter_repo` (or a repo link) with green tests + the reflection.
 
-*A6 is graded on working tests, evidence of review, and the quality of your reflection (see syllabus).*
+*A9 is graded on working tests, evidence of review, and the quality of your reflection (see syllabus).*
 
-> If you can't install Claude Code, you may do A6 with Claude or Gemini in the browser — but you must still produce the same green tests and reflection. The notebook `code/01_ai_assisted_coding.ipynb` shows the AI-as-coder loop without needing the CLI.
+> If you can't install Claude Code, you may do A9 with Claude or Gemini in the browser — but you must still produce the same green tests and reflection. The notebook `code/01_ai_assisted_coding.ipynb` shows the AI-as-coder loop without needing the CLI.
 
 ---
 

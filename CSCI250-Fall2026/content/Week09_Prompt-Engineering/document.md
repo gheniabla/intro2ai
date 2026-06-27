@@ -15,7 +15,7 @@ By the end of this week you will be able to:
 7. **Iteratively refine** a prompt and evaluate the change.
 8. Apply each pattern with **both Claude and Gemini** and note the API differences.
 
-> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + Assignment A4).
+> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + Capstone Milestone M1). There is **no separate weekly assignment** this week — the prompt-engineering exercises are **ungraded practice**, and your graded deliverable is **Capstone Milestone M1** (see `capstone/M1.md`).
 
 This is the second week of the LLM block. Week 8 explained *how* LLMs work; this week is about *steering* them. These patterns are the workhorses for RAG (Week 11), AI-assisted coding (Week 12), and agents (Week 13).
 
@@ -169,17 +169,20 @@ The **prompting techniques are identical**; only the call surface differs. See `
 
 ---
 
-## 10. Lab — Assignment A4 (due Sunday 11:59 PM PT)
-**Build and refine a small prompt-powered tool.**
+## 10. Lab — ungraded practice + Capstone Milestone M1 (due Sunday 11:59 PM PT)
+There is **no standalone weekly assignment** this week. The exercises below are **ungraded practice** to build fluency with the patterns; your **graded deliverable is Capstone Milestone M1** (proposal + "My Assistant" v1 — see `capstone/M1.md`).
+
+**Ungraded practice — build and refine a small prompt-powered tool:**
 
 1. Open `code/01_prompt_patterns.ipynb` and run every pattern (zero/few-shot, role, CoT, delimiters, JSON). Complete the inline tasks. Then run `code/03_reasoning_and_cot.ipynb` to see naive-vs-CoT, few-shot CoT, and a self-consistency vote.
 2. Pick a real task (e.g., "extract structured fields from messy product reviews" or "classify support tickets"). Write a **zero-shot** prompt, then improve it into a **few-shot + JSON-output** prompt with a **system role** and **delimiters**.
 3. Run your final prompt on **3 test inputs**, parsing the JSON with `json.loads`. Show that all 3 parse.
 4. In `code/02_claude_vs_gemini.ipynb`, run your prompt on **both Claude and Gemini** and note any difference.
 5. Write a short **before/after** reflection (~150 words): which changes helped most, and why?
-6. **Submit:** both notebooks (or Colab links) + the reflection. Include a one-line **AI Use** note.
 
-*See the syllabus for the A-assignment rubric.*
+**Graded deliverable — Capstone Milestone M1 (`capstone/M1.md`):** write your one-paragraph project proposal and build **"My Assistant" v1** — a chatbot with a deliberate **role/system prompt** and a **reasoning style** — running end-to-end on a free tier. The practice above feeds directly into this. **Submit M1 by Sunday 11:59 PM PST.**
+
+*See `capstone/M1.md` and the syllabus for the Capstone rubric.*
 
 ---
 

@@ -14,25 +14,22 @@ slides = [
         "The Model Context Protocol (MCP): client vs. server",
         "Serve a small agent behind a Flask endpoint",
         "Agent safety (prompt injection) + evaluation (scorecard)",
-        "Assignment S2: build + serve a tool-using agent"]},
+        "Assignment A10: build + serve a tool-using agent"]},
 
-    {"type": "section", "title": "What Is an Agent?"},
-    {"type": "bullets", "title": "From One-Shot to Agentic", "bullets": [
+    {"type": "bullets", "title": "What Is an Agent? From One-Shot to Agentic", "bullets": [
         "Plain LLM call: prompt in, text out — one shot",
         "Agent: an LLM in a LOOP, given TOOLS it can request",
         "The model asks for a tool; YOUR code runs it; result goes back",
         ("You already met one: Claude Code (tools = files, shell, git)", 1)]},
 
-    {"type": "section", "title": "The Agent Loop"},
-    {"type": "bullets", "title": "Reason → Act → Observe", "bullets": [
+    {"type": "bullets", "title": "The Agent Loop: Reason → Act → Observe", "bullets": [
         "REASON: model decides — answer, or call a tool?",
         "ACT: your code runs the requested tool with the model's args",
         "OBSERVE: feed the result back; call the model again",
         "Repeat until a normal text answer — or hit max-turns",
         ("A frozen, text-only model can now use live data + real compute", 1)]},
 
-    {"type": "section", "title": "Tool / Function Calling"},
-    {"type": "code", "title": "Tools in Claude",
+    {"type": "code", "title": "Tool / Function Calling — Tools in Claude",
      "code": "tools = [{\n"
              "  \"name\": \"get_weather\",\n"
              "  \"description\": \"Current temperature for a city.\",\n"
@@ -106,7 +103,7 @@ slides = [
         "Run 03_agent_safety_and_eval.ipynb (injection + scorecard)",
         "Capstone: 'My Assistant' v3 — one tool + a safety guardrail",
         "Serve your agent via Flask (/ask) — run agent_app.py",
-        "Submit Assignment S2 by Sunday 11:59 PM PT"]},
+        "Submit Assignment A10 by Sunday 11:59 PM PT"]},
 ]
 
 if __name__ == "__main__":

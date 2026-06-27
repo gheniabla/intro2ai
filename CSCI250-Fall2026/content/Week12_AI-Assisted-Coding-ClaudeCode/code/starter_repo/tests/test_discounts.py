@@ -3,7 +3,7 @@
 Run from starter_repo/:  python -m pytest -q
 
 The apply_discount tests already PASS. The best_price tests FAIL until you
-implement best_price() in mathkit/discounts.py (that is Lab A6).
+implement best_price() in mathkit/discounts.py (that is Lab A9).
 """
 import pytest
 from mathkit.discounts import apply_discount, best_price

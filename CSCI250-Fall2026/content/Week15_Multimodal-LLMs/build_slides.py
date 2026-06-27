@@ -12,7 +12,7 @@ slides = [
         "Send an image to Claude and Gemini vision models",
         "Practical tasks: describe, OCR, read a chart into JSON",
         "Image GENERATION (diffusion) — conceptually",
-        "Final Project continues (A7) — Week 15 milestone"]},
+        "Capstone work: 'My Assistant' v4 (optional multimodal)"]},
 
     {"type": "section", "title": "What Multimodal Means"},
     {"type": "bullets", "title": "From Pixels to Tokens", "bullets": [
@@ -90,7 +90,7 @@ slides = [
         "Read: Claude Vision + Gemini multimodal docs",
         "Run 01_multimodal_basics.ipynb — Claude vs Gemini",
         "Run 02_charts_and_extraction.ipynb — read a chart as JSON",
-        "Hit your Week 15 Final-Project milestone (end-to-end)",
+        "Capstone: advance 'My Assistant' toward v4 (optional multimodal)",
         "Post a progress update + screenshot (with AI-Use note)"]},
 ]
 

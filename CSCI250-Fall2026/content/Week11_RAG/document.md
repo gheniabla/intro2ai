@@ -14,7 +14,7 @@ By the end of this week you will be able to:
 6. **Cite sources** so users can verify the answer, and recognize when "I don't know" is the right output.
 7. **Evaluate** a RAG system with the **RAG triad** (Context Relevance, Groundedness, Answer Relevance) using an **LLM-as-judge**, then change one thing and **re-measure**.
 
-> **Time budget:** ~10 hours this week. **No graded assignment** — you build a working RAG pipeline you can reuse for your Final Project.
+> **Time budget:** ~10 hours this week (lecture + slides + three notebooks + **Capstone Milestone M2**). There is **no standalone weekly assignment** this week — your graded work is **Capstone Milestone M2 (core build)** (see `capstone/M2.md`). The RAG pipeline you build here is the "main engine" of your assistant.
 
 ---
 
@@ -214,14 +214,14 @@ We return to formal **LLM evaluation** (eval harnesses, safety, bias) in Week 17
 
 ---
 
-## 11. Lab — no graded assignment this week
-There is **no assignment to submit** for Week 11. Build and keep the pipeline:
+## 11. Lab — Capstone Milestone M2 (due Sunday 11:59 PM PT)
+This week's graded work is **Capstone Milestone M2 — Core Build** (see `capstone/M2.md`): "My Assistant" v2, where your assistant's **central capability works end-to-end**. The notebooks below give you the RAG backbone; use them to build (or feed) your M2 core engine:
 1. Run `code/01_rag_pipeline.ipynb` — the full load → chunk → embed → store → retrieve → ground → **generate (Claude + Gemini)** → cite pipeline over a small doc set.
 2. Run `code/02_rag_experiments.ipynb` — change `chunk_size`, `chunk_overlap`, and `k`; watch retrieval quality shift; try an out-of-scope question and confirm it answers "I don't know."
 3. Run `code/03_rag_evaluation.ipynb` — score the RAG triad with `llm_judge`, change the chunking, and **re-measure** with a `scorecard`. Decide which config you'd ship.
-4. Save this pipeline — it is a strong backbone for many **Final Project** ideas.
+4. **Build your M2 deliverable** per `capstone/M2.md`: get your assistant's core capability running end-to-end with visible output, and keep 5–10 representative inputs for your M3 eval set.
 
-*Nothing is collected. The pipeline you build here is reusable course infrastructure.*
+*Submit M2 per `capstone/M2.md`. The pipeline you build here is reusable course infrastructure and the backbone of your Capstone.*
 
 ---
 

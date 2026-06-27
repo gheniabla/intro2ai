@@ -1,4 +1,4 @@
-"""agent_app.py — serve a tool-using agent over HTTP (CSCI 250, Week 13 / S2).
+"""agent_app.py — serve a tool-using agent over HTTP (CSCI 250, Week 13 / A10).
 
 Run:
     export ANTHROPIC_API_KEY=...        # optional; falls back without it

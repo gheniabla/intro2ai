@@ -12,9 +12,11 @@ Complete course package: syllabus, 17-week schedule, and per-week content (lectu
 | `Free-Tier-Playbook.md` | Get free keys, run everything at $0, keep keys safe |
 | `Final-Project-Capstone.md` | "My Assistant" capstone: tracks, milestones, rubric |
 | `Rubrics.md` | Analytic rubrics + exemplars for every graded item |
+| `assignments/` | Student assignment specs **A1–A10** (6 pts each, due Sundays 11:59 PM PST) |
+| `capstone/` | Capstone milestone handouts **M1–M5** (the staged path to the 20-pt final project) |
 | `content/` | Per-week materials (Weeks 1–17) |
 | `tools/` | `slidegen.py` (deck theme) · `nbgen.py` (notebooks) · `eval_utils.py` (LLM-as-judge) |
-| `course-design/` | Instructor: weekly template, quality checklist, design notes + sources |
+| `course-design/` | Design notes + sources (rationale for the course design) |
 
 ## Quality design (benchmarked against top courses)
 This course was benchmarked against Stanford CS224N/CS336/CS25, Karpathy's Zero-to-Hero, DeepLearning.AI, Hugging Face, Berkeley LLM-Agents, fast.ai, plus Quality Matters / RSI / UDL research. Highlights baked in: signature from-scratch labs (BPE tokenizer, attention, embeddings), **evaluation as a throughline** (LLM-as-judge), a **single capstone upgraded all term** ("My Assistant"), "wow-in-5-minutes" notebooks with cost banners, rubrics + exemplars, and an RSI engagement cadence. Full rationale + citations: `course-design/Design-Notes-and-Sources.md`.

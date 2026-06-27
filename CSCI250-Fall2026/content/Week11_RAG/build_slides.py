@@ -14,7 +14,7 @@ slides = [
         "Retrieve from ChromaDB; ground the prompt",
         "Generate with Claude AND Gemini; cite sources",
         "Evaluate with the RAG triad — measure, don't guess",
-        ("No graded assignment — build a reusable RAG pipeline", 1)]},
+        ("Capstone Milestone M2 (core build) — your graded work this week", 1)]},
 
     {"type": "section", "title": "Why RAG?"},
     {"type": "bullets", "title": "A Bare LLM Can't See...", "bullets": [
@@ -25,8 +25,7 @@ slides = [
         "RAG = retrieve trusted text, put it in the prompt, answer from THAT",
         ("vs fine-tuning: RAG is editable, cheap to update, and citable", 1)]},
 
-    {"type": "section", "title": "The RAG Pipeline"},
-    {"type": "two_col", "title": "Two Phases",
+    {"type": "two_col", "title": "The RAG Pipeline — Two Phases",
      "left_title": "Indexing (once, ahead)",
      "left": ["load documents", "chunk into passages",
               "embed each chunk", "store in ChromaDB + metadata"],
@@ -34,8 +33,7 @@ slides = [
      "right": ["embed the question", "retrieve top-k chunks",
                "ground the prompt", "generate + cite (Claude / Gemini)"]},
 
-    {"type": "section", "title": "Chunking"},
-    {"type": "code", "title": "Split Documents Sensibly",
+    {"type": "code", "title": "Chunking — Split Documents Sensibly",
      "code": "from langchain_text_splitters import RecursiveCharacterTextSplitter\n\n"
              "splitter = RecursiveCharacterTextSplitter(\n"
              "    chunk_size=500,     # ~chars per chunk\n"
@@ -55,7 +53,6 @@ slides = [
              ")",
      "caption": "Metadata (source, chunk #) is what makes citations possible later"},
 
-    {"type": "section", "title": "Retrieve & Ground"},
     {"type": "code", "title": "Retrieve, then Ground the Prompt",
      "code": "res = col.query(query_texts=[question], n_results=3)\n"
              "retrieved = res['documents'][0]\n"
@@ -124,7 +121,8 @@ slides = [
         "Run 02_rag_experiments.ipynb (tune chunk_size, overlap, k)",
         "Run 03_rag_evaluation.ipynb (RAG triad + re-measure)",
         "Try an out-of-scope question → expect \"I don't know\"",
-        "Save the pipeline — reuse it for your Final Project"]},
+        "Build your M2 core engine; save the pipeline for the Capstone",
+        "Submit Capstone M2 by Sunday 11:59 PM PST"]},
 ]
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ slides = [
         "ChromaDB = the scaled-up version of what you built",
         "GenAI frameworks: LangChain building blocks & chains",
         "Document loaders & text splitters; LlamaIndex",
-        ("No graded assignment — Final Project ideas posted", 1)]},
+        ("Assignment A8: embeddings + semantic search + a simple LLM app", 1)]},
 
     {"type": "section", "title": "Embeddings — Build It Before the Database"},
     {"type": "bullets", "title": "Start With the Dumb Baseline", "bullets": [
@@ -97,14 +97,14 @@ slides = [
         "Study-guide / quiz generator with citations",
         "Codebase Q&A — index a small repo",
         "Policy / FAQ assistant that cites sources",
-        ("Full proposal + rubric arrive with A7 (Week 14)", 1)]},
+        ("Proposal is Capstone M1 (Week 9); Capstone grows M2–M5", 1)]},
 
     {"type": "closing", "title": "This Week — To Do", "bullets": [
         "Run 00_embeddings_intuition.ipynb FIRST (build it from scratch)",
         "Run 01_langchain_llamaindex.ipynb",
         "Run 02_embeddings_chromadb.ipynb",
         "Draft one Final Project idea",
-        "No assignment to submit — get ahead on the project"]},
+        "Submit Assignment A8 by Sunday 11:59 PM PST"]},
 ]
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-# Lab A6 starter repo — `mathkit`
+# Lab A9 starter repo — `mathkit`
 
 A tiny package with one working function and one **incomplete** function.
 

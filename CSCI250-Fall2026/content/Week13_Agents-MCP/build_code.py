@@ -33,7 +33,7 @@ agents = [
              "print('Claude key:', HAVE_CLAUDE, '| Gemini key:', HAVE_GEMINI)"),
     ("md", "## 1. Define some tools\n"
            "A tool is just a Python function plus a JSON **schema** the model reads. "
-           "We expose two; in S2 you'll add a third of your own."),
+           "We expose two; in A10 you'll add a third of your own."),
     ("code", "def add(a, b):\n"
              "    \"\"\"Add two numbers.\"\"\"\n"
              "    return a + b\n\n"
@@ -119,7 +119,7 @@ agents = [
              "    print('GEMINI AGENT:'); print(chat.send_message(Q).text)\n"
              "else:\n"
              "    print('No Gemini key — skipping (fallback above shows the loop).')"),
-    ("md", "## 6. Your turn (Assignment S2)\n"
+    ("md", "## 6. Your turn (Assignment A10)\n"
            "1. Add a **third tool** (e.g. a unit converter or word counter) — function, "
            "schema, and an entry in `TOOLS`.\n"
            "2. Ask a question that forces the agent to use it; capture the transcript.\n"
@@ -181,14 +181,14 @@ flask_nb = [
            "     -d '{\"message\": \"What is 12 + 30, and the price of coffee?\"}'\n"
            "```\n"
            "**Never hard-code your API key in the app** — it reads it from the "
-           "environment. For S2, wire `run_agent` to your real tool-using loop from "
+           "environment. For A10, wire `run_agent` to your real tool-using loop from "
            "Notebook 1."),
     ("code", "# scratch:\n"),
 ]
 build_notebook(flask_nb, os.path.join(CODE, "02_agent_flask_app.ipynb"))
 
 # ============================================================ agent_app.py
-AGENT_APP = r'''"""agent_app.py — serve a tool-using agent over HTTP (CSCI 250, Week 13 / S2).
+AGENT_APP = r'''"""agent_app.py — serve a tool-using agent over HTTP (CSCI 250, Week 13 / A10).
 
 Run:
     export ANTHROPIC_API_KEY=...        # optional; falls back without it
@@ -464,7 +464,7 @@ safety = [
            "- **Evaluate** agents: score tool-choice and answer correctness; a `scorecard` "
            "turns 'seems fine' into a number you can track.\n"
            "- This is a preview of **Week 17 — LLM & GenAI Evaluation, Safety & Finals.**\n\n"
-           "### Tasks (S2 stretch)\n"
+           "### Tasks (A10 stretch)\n"
            "1. Add a new injection pattern and a test doc that triggers it.\n"
            "2. Add a 4th eval case for *your* third tool; keep the scorecard green.\n"
            "3. One sentence: why is 'log everything' itself a safety control?"),

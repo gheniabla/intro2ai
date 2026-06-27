@@ -14,7 +14,7 @@ By the end of this week you will be able to:
 6. Reason about agent **reliability and safety**: loops, bad tool calls, **prompt injection** via tool output, and keeping a human in control.
 7. **Evaluate** an agent: score whether it chose the right tool and gave the right answer, and read a **scorecard**.
 
-> **Time budget:** ~10 hours this week (lecture + slides + notebooks + Assignment S2).
+> **Time budget:** ~10 hours this week (lecture + slides + notebooks + Assignment A10).
 
 > **🎯 Capstone checkpoint —** "My Assistant" v3: let your assistant **call at least one tool**, with a **safety guardrail** (least-privilege tools + a max-turns bound, and don't trust tool output as instructions).
 
@@ -145,7 +145,7 @@ Think of MCP as **"USB-C for AI tools"**: one standard plug instead of a custom 
 - **Separation of concerns:** tool authors and app builders work independently against a contract.
 - **Ecosystem:** a growing library of ready-made servers you can plug in.
 
-In Claude Code you add a server with `claude mcp add ...`; it then appears as tools the agent can call. You don't need to build an MCP server for S2 — but you should be able to **explain the client/server split and why a shared protocol beats one-off integrations.**
+In Claude Code you add a server with `claude mcp add ...`; it then appears as tools the agent can call. You don't need to build an MCP server for A10 — but you should be able to **explain the client/server split and why a shared protocol beats one-off integrations.**
 
 ---
 
@@ -220,7 +220,7 @@ See `code/03_agent_safety_and_eval.ipynb` — a live injection attack vs. a guar
 
 ---
 
-## 8. Assignment — S2 (due Sunday 11:59 PM PT)
+## 8. Assignment — A10 (due Sunday 11:59 PM PT)
 **Goal:** build and serve a small tool-using agent.
 
 1. In `code/01_agents_tool_calling.ipynb`, get the **Claude** agent loop running with at least **two tools** (one of them must be one *you* add — e.g., a unit converter, a word counter, a fake-database lookup).
@@ -232,7 +232,7 @@ See `code/03_agent_safety_and_eval.ipynb` — a live injection attack vs. a guar
 
 **Submit:** your notebook(s) + `agent_app.py` (or a repo link) + the design note.
 
-*S2 is graded on a working tool-using loop, the Flask endpoint, and the clarity of your design note (see syllabus). Notebooks must degrade gracefully without an API key.*
+*A10 is graded on a working tool-using loop, the Flask endpoint, and the clarity of your design note (see syllabus). Notebooks must degrade gracefully without an API key.*
 
 ---
 

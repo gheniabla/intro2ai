@@ -10,9 +10,9 @@ By the end of this week you will be able to:
 2. Send an **image plus a prompt** to **Claude** (`claude-sonnet-4-6`) and **Gemini** (`gemini-2.5-flash` / `gemini-2.5-pro`) and read the response.
 3. Use vision models for practical tasks: **describe/analyze** an image, **OCR** text, and **read a chart** into structured data (JSON).
 4. Understand, conceptually, how **image generation (diffusion)** works and how it differs from understanding.
-5. Apply multimodal thinking to **Final Project Track D** and continue **A7**.
+5. Apply multimodal thinking to your **Capstone** — optionally extend "My Assistant" to **v4 (multimodal)** for the Multimodal track.
 
-> **Time budget:** ~10 hours (lecture + slides + videos + two notebooks + A7 work).
+> **Time budget:** ~10 hours (lecture + slides + videos + two notebooks + Capstone work). There is **no separate weekly assignment** this week — your graded work continues through the **Capstone milestones**.
 
 ---
 
@@ -134,16 +134,16 @@ So a diffusion model "sculpts" an image out of noise, guided by your words. This
 
 ---
 
-## 10. Lab — Assignment A7 continues (Final Project)
-There is **no new standalone assignment** this week — keep building toward the Final Project (proposal submitted in Week 14).
+## 10. Lab — Capstone work: "My Assistant" v4 (optional multimodal)
+There is **no separate weekly assignment** this week. This is **Capstone work** — keep growing "My Assistant" toward **v4 (optional multimodal)**. If you're on the **Multimodal** track, this week's notebooks are the spine of your build; on any other track, adding image understanding is optional polish, not required.
 
 **Do this week:**
 1. Run `code/01_multimodal_basics.ipynb` — send a sample image to **Claude** and **Gemini** and compare descriptions/OCR.
 2. Run `code/02_charts_and_extraction.ipynb` — generate a chart with Matplotlib, have a vision model read it back as JSON, and **check accuracy** against the true values.
-3. **Project work:** complete your **Week 15 milestone** — get *something* running end-to-end. If your project is Track D (multimodal), adapt these notebooks directly. Otherwise, make your first real end-to-end call for your chosen track.
+3. **Capstone work:** advance "My Assistant" toward **v4**. Multimodal-track students adapt these notebooks directly into the assistant; other tracks may optionally bolt on a vision feature, or simply keep progressing their core milestones.
 4. Post a short **progress update** in the discussion (2–3 sentences + one screenshot). Include a one-line **AI Use** note.
 
-*Graded as part of the Final Project arc (see the Week 14 rubric).*
+*Graded as part of the **Capstone milestone arc** (see `capstone/` and the rubric); there is no standalone weekly assignment for this week.*
 
 ---
 

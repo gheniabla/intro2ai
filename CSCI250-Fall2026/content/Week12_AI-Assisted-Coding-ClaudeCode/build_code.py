@@ -1,4 +1,4 @@
-"""Build Week 12 sample-code notebook AND the starter_repo for Lab A6.
+"""Build Week 12 sample-code notebook AND the starter_repo for Lab A9.
 Run: python build_code.py
 """
 import sys, os
@@ -15,7 +15,7 @@ ai_coding = [
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Claude Code lives in your terminal — but the *idea* (reason → act → "
            "observe → review) works in a notebook too. Here we drive an LLM to "
-           "write code against a **failing test**, exactly the way Lab A6 asks you "
+           "write code against a **failing test**, exactly the way Lab A9 asks you "
            "to work, and we keep a human in the loop the whole time.\n\n"
            "> Runs in Colab. **Degrades gracefully without an API key** — the "
            "fallback shows the same workflow with a hand-written patch."),
@@ -94,14 +94,14 @@ ai_coding = [
     ("md", "## 4. Add YOUR own edge case\n"
            "The AI passed *our* tests. Did it handle a 0% coupon? Duplicate coupons? "
            "Add an assert the model wasn't given and re-run. This is the human-review "
-           "step you'll repeat in Lab A6."),
+           "step you'll repeat in Lab A9."),
     ("code", "def my_extra_tests(best_price):\n"
              "    assert best_price(100, [0]) == 100      # 0% off\n"
              "    assert best_price(100, [10, 10]) == 90  # duplicates\n"
              "    # TODO: add one more of your own\n"
              "    return 'my extra tests passed'\n\n"
              "print(my_extra_tests(ns['best_price']))"),
-    ("md", "## 5. Reflection (for A6)\n"
+    ("md", "## 5. Reflection (for A9)\n"
            "In ~200 words: where did the AI help most, did it over-reach or hallucinate, "
            "and what did *you* have to verify? Then go do the real lab in "
            "`code/starter_repo/` with **Claude Code**."),
@@ -125,14 +125,14 @@ def write(path, text):
 
 # ---- package __init__
 write(os.path.join(PKG, "__init__.py"),
-      '"""mathkit — a tiny pricing toolkit for CSCI 250 Lab A6."""\n'
+      '"""mathkit — a tiny pricing toolkit for CSCI 250 Lab A9."""\n'
       "from .discounts import apply_discount, best_price  # noqa: F401\n")
 
 # ---- discounts.py : one WORKING fn + one INCOMPLETE fn
 write(os.path.join(PKG, "discounts.py"),
       '"""Pricing helpers.\n\n'
       "`apply_discount` already works and has passing tests.\n"
-      "`best_price` is INCOMPLETE — your Lab A6 task is to finish it (with AI help)\n"
+      "`best_price` is INCOMPLETE — your Lab A9 task is to finish it (with AI help)\n"
       "so the failing tests in tests/test_discounts.py pass. Keep the signatures.\n"
       '"""\n\n\n'
       "def apply_discount(price, percent_off):\n"
@@ -154,16 +154,16 @@ write(os.path.join(PKG, "discounts.py"),
       "      * otherwise   -> apply only the largest discount\n"
       "      * never return a negative number\n"
       "      * round to 2 decimals\n\n"
-      "    TODO (Lab A6): implement this. Hint: you can reuse apply_discount().\n"
+      "    TODO (Lab A9): implement this. Hint: you can reuse apply_discount().\n"
       '    """\n'
-      "    raise NotImplementedError(\"best_price is your Lab A6 task\")\n")
+      "    raise NotImplementedError(\"best_price is your Lab A9 task\")\n")
 
 # ---- failing tests for best_price (+ passing tests for apply_discount)
 write(os.path.join(TESTS, "test_discounts.py"),
       '"""Tests for mathkit.discounts.\n\n'
       "Run from starter_repo/:  python -m pytest -q\n\n"
       "The apply_discount tests already PASS. The best_price tests FAIL until you\n"
-      "implement best_price() in mathkit/discounts.py (that is Lab A6).\n"
+      "implement best_price() in mathkit/discounts.py (that is Lab A9).\n"
       '"""\n'
       "import pytest\n"
       "from mathkit.discounts import apply_discount, best_price\n\n\n"
@@ -194,7 +194,7 @@ write(os.path.join(REPO, "pytest.ini"),
 # ---- a CLAUDE.md so Claude Code has project memory
 write(os.path.join(REPO, "CLAUDE.md"),
       "# mathkit — project notes for Claude Code\n\n"
-      "Tiny pricing toolkit used in CSCI 250 Lab A6.\n\n"
+      "Tiny pricing toolkit used in CSCI 250 Lab A9.\n\n"
       "## How to run tests\n"
       "```bash\n"
       "python -m pytest -q\n"
@@ -209,7 +209,7 @@ write(os.path.join(REPO, "CLAUDE.md"),
 
 # ---- README for students
 write(os.path.join(REPO, "README.md"),
-      "# Lab A6 starter repo — `mathkit`\n\n"
+      "# Lab A9 starter repo — `mathkit`\n\n"
       "A tiny package with one working function and one **incomplete** function.\n\n"
       "## Your task\n"
       "Make the failing tests pass by implementing `best_price()` in\n"

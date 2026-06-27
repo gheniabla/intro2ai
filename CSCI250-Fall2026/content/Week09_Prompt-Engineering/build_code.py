@@ -113,7 +113,7 @@ patterns = [
              "except Exception as e:\n"
              "    print('Set ANTHROPIC_API_KEY (or check JSON) to run:', e)"),
 
-    ("md", "---\n### Tasks (A4)\n"
+    ("md", "---\n### Tasks (ungraded practice — feeds Capstone M1)\n"
            "1. Change the **role** in cell 3 to a different persona and re-run.\n"
            "2. Add a 4th few-shot example in cell 2 and see if reliability improves.\n"
            "3. Pick your own extraction task and write a JSON-output prompt for it.\n\n"
@@ -213,7 +213,7 @@ both = [
              "except Exception as e:\n"
              "    print('Set ANTHROPIC_API_KEY (or check JSON) to run:', e)"),
 
-    ("md", "## 4. A4 deliverable\n"
+    ("md", "## 4. Practice deliverable (ungraded — feeds Capstone M1, see capstone/M1.md)\n"
            "1. Replace the EVAL list with **your own** 3 inputs for a task you choose.\n"
            "2. Refine your prompt until all 3 parse with `json.loads`.\n"
            "3. Run your final prompt on **Gemini** too (swap `claude` for `gemini`) and note differences.\n"
@@ -379,7 +379,7 @@ reasoning = [
            "- **Self-consistency** (sample + vote) beats a single sample — at extra cost.\n"
            "- Reasoning is for **multi-step** work (math, logic, planning); simple lookups "
            "don't need it.\n\n"
-           "### Tasks (A4)\n"
+           "### Tasks (ungraded practice — feeds Capstone M1)\n"
            "1. Swap in your own multi-step problem; show naive-wrong vs CoT-right.\n"
            "2. Try `n=3` vs `n=7` in self-consistency — does the vote stabilize?\n"
            "3. If you have both keys, note one difference in how Claude vs Gemini reason."),

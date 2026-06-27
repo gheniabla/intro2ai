@@ -14,7 +14,7 @@ By the end of this week you will be able to:
 6. Recognize LLM **capabilities and failure modes**, especially **hallucination**, and how to mitigate them.
 7. Call **Anthropic Claude** and **Google Gemini**, and run a **local** open model with **Ollama / Hugging Face**, then compare them.
 
-> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + Assignment S1).
+> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + Assignment A7).
 
 This week begins the **LLM block** of the course. Everything from here — prompt engineering (Week 9), RAG (Week 11), agents (Week 13) — builds on the mental model you form now.
 
@@ -192,8 +192,8 @@ The notebook (`code/04_attention_from_scratch.ipynb`) has you fill in the scores
 
 ---
 
-## 11. Lab — Assignment S1 (due Sunday 11:59 PM PT)
-**S1 is a short structured exercise** demonstrating you understand how LLMs work.
+## 11. Lab — Assignment A7 (due Sunday 11:59 PM PT)
+**A7 is a short structured exercise** demonstrating you understand how LLMs work.
 
 1. Open `code/01_llm_concepts.ipynb`. Run all cells and complete the inline tasks: tokenize three strings of your own, then run the **same prompt at temperature 0.0 and 1.0 three times each** and describe the difference.
 2. Open `code/02_claude_gemini_local.ipynb`. Add your keys (Colab Secrets) and send **one shared prompt** to **Claude**, **Gemini**, and a **local** model (Ollama). Fill in the comparison table (length, tone, correctness, speed).

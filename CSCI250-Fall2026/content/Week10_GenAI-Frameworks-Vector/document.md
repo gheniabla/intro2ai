@@ -13,7 +13,7 @@ By the end of this week you will be able to:
 5. Use the core LangChain building blocks: **models**, **prompt templates**, **output parsers**, and **chains** (LCEL); load and split documents with **loaders** and **text splitters**.
 6. Connect the pieces into a tiny "ask-your-docs" prototype that previews next week's full **RAG** pipeline.
 
-> **Time budget:** ~10 hours this week. **No graded assignment** — but **Final Project ideas are posted** (see the sidebar). Use the spare time to start scoping your project.
+> **Time budget:** ~10 hours this week (lecture + slides + three notebooks + **Assignment A8**). This week's graded work is **Assignment A8** — embeddings + semantic search + a simple LLM app (see `assignments/A8.md`). Final Project ideas are also posted in the sidebar.
 
 > **Order matters this week.** We build the **embeddings idea from scratch first** (Section 1) so the vector database in Section 2 — and LangChain after it — is never a black box. Start with `code/00_embeddings_intuition.ipynb`.
 
@@ -227,7 +227,7 @@ Your **Final Project** (due Dec 19) is an applied GenAI app. Start thinking now.
 - **Policy / FAQ assistant** — ground answers in a club, syllabus, or product FAQ and cite sources.
 - **Multimodal helper** (preview of Week 15) — describe images plus answer text questions.
 
-Pick something you'd actually use. A full proposal/rubric comes with **A7** in Week 14; this week is just for brainstorming. Bring an idea to office hours.
+Pick something you'd actually use. Your project proposal is **Capstone Milestone M1** (Week 9); the Capstone then grows across milestones M2–M5. This week is for brainstorming and building the retrieval skeleton in A8. Bring an idea to office hours.
 
 ---
 
@@ -240,14 +240,14 @@ Pick something you'd actually use. A full proposal/rubric comes with **A7** in W
 
 ---
 
-## 9. Lab — no graded assignment this week
-There is **no assignment to submit** for Week 10. Instead, **run the notebooks in order**:
+## 9. Lab — Assignment A8 (due Sunday 11:59 PM PT)
+This week's graded work is **Assignment A8 — Embeddings + Semantic Search + a Simple LLM App** (see `assignments/A8.md`). It builds **semantic search from scratch** — embeddings, cosine similarity by hand, top-k retrieval — and wires it into a tiny "ask-your-docs" LLM app, the retrieval skeleton your Capstone RAG assistant grows from. Work through the notebooks in order:
 1. Run `code/00_embeddings_intuition.ipynb` **first** — keyword search fails, then you build embeddings + cosine similarity + top-k semantic search from scratch, and see ChromaDB as the scaled-up version.
 2. Run `code/01_langchain_llamaindex.ipynb` — chains with Claude & Gemini, plus a LlamaIndex index.
 3. Run `code/02_embeddings_chromadb.ipynb` — embeddings + a ChromaDB vector store you query in depth.
-4. Skim the **Final Project ideas** sidebar and draft one idea (a sentence or two) to discuss in office hours.
+4. Complete the A8 deliverable (semantic search + simple LLM app) per `assignments/A8.md`, and skim the **Final Project ideas** sidebar.
 
-*Nothing is collected, but Week 11 assumes you have run these notebooks.*
+*Submit A8 per the spec; Week 11 also assumes you have run these notebooks.*
 
 ---
 

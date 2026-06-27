@@ -101,9 +101,9 @@ slides = [
         "Read Anthropic + Google prompt-engineering docs",
         "Run 01_prompt_patterns.ipynb (all six patterns)",
         "Run 03_reasoning_and_cot.ipynb (CoT + self-consistency)",
-        "Capstone: 'My Assistant' v1 — give it a role + reasoning style",
-        "Build & refine a JSON-output tool; test on 3 inputs",
-        "Submit Assignment A4 by Sunday 11:59 PM PT"]},
+        "Practice (ungraded): build & refine a JSON-output tool; test on 3 inputs",
+        "Capstone M1: write your proposal + 'My Assistant' v1 (role + reasoning style)",
+        "Submit Capstone M1 by Sunday 11:59 PM PST"]},
 ]
 
 if __name__ == "__main__":

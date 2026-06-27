@@ -45,6 +45,8 @@ intro2ai/
 └── CSCI250-Fall2026/
     ├── Start-Here.md · Syllabus.md · Schedule.md        # course front matter
     ├── Free-Tier-Playbook.md · Rubrics.md · Final-Project-Capstone.md
+    ├── assignments/        # A1–A10 assignment specs (6 pts each)
+    ├── capstone/           # M1–M5 capstone milestone handouts
     ├── content/            # Weeks 1–17: document.md + slides.pptx + code/*.ipynb
     ├── tools/              # slidegen.py · nbgen.py · eval_utils.py (build & eval helpers)
     └── course-design/      # design rationale + sources

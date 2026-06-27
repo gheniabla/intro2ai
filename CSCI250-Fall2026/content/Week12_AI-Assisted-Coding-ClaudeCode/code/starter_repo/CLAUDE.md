@@ -1,6 +1,6 @@
 # mathkit — project notes for Claude Code
 
-Tiny pricing toolkit used in CSCI 250 Lab A6.
+Tiny pricing toolkit used in CSCI 250 Lab A9.
 
 ## How to run tests
 ```bash

@@ -24,20 +24,15 @@ slides = [
         ("No database lookup — text is generated, not retrieved", 1),
         ("This is why LLMs are fluent AND why they can make things up", 1)]},
 
-    {"type": "section", "title": "Tokens & Context"},
-    {"type": "bullets", "title": "Tokens & Tokenization", "bullets": [
+    {"type": "bullets", "title": "Tokens & the Context Window", "bullets": [
         "Models see tokens (sub-word IDs), not characters or words",
-        "Rule of thumb: 1 token ≈ 4 chars ≈ 0.75 words",
-        "Common words = 1 token; rare words split into several",
-        ("You pay per token; max_tokens caps the response", 1),
-        ("Prompt + reply must fit the context window", 1)]},
-    {"type": "bullets", "title": "The Context Window", "bullets": [
-        "Max tokens the model can attend to at once",
-        "Prompt + generated reply must fit inside it",
-        "No memory between API calls — the client replays history",
+        "Rule of thumb: 1 token ≈ 4 chars ≈ 0.75 words; rare words split into several",
+        "You pay per token; max_tokens caps the response",
+        "Context window = max tokens the model can attend to at once",
+        ("Prompt + generated reply must both fit inside it", 1),
+        ("No memory between API calls — the client replays history", 1),
         ("Long docs need chunking → RAG (Week 11)", 1)]},
 
-    {"type": "section", "title": "Controlling Output"},
     {"type": "code", "title": "Sampling Parameters",
      "code": "msg = client.messages.create(\n"
              "    model=\"claude-sonnet-4-6\",\n"
@@ -54,7 +49,6 @@ slides = [
              "Review: \"The acting saved a dull script.\" ->",
      "caption": "Examples in the prompt teach the task + output format — no retraining. Foundation for Week 9."},
 
-    {"type": "section", "title": "Capabilities & Failure Modes"},
     {"type": "two_col", "title": "What LLMs Can & Can't Do",
      "left_title": "Strengths",
      "left": ["Summarize, draft, translate", "Classify & extract structure",
@@ -68,8 +62,7 @@ slides = [
         "Ask for sources; set temperature=0 for factual tasks",
         "Give the model tools (Week 13); verify anything important"]},
 
-    {"type": "section", "title": "Under the Hood: Build a BPE Tokenizer"},
-    {"type": "bullets", "title": "Byte-Pair Encoding, From Scratch", "bullets": [
+    {"type": "bullets", "title": "Under the Hood: Byte-Pair Encoding, From Scratch", "bullets": [
         "Start from raw bytes (vocab of 256)",
         "Count every adjacent pair of tokens",
         "Merge the most frequent pair into a new token; repeat",
@@ -116,7 +109,7 @@ slides = [
         "Build the BPE tokenizer (03) — fill-ins + round-trip on your text",
         "Build attention (04) — fill-ins + paste your heatmap",
         "Do the hallucination hunt + comparison table",
-        "Submit Assignment S1 by Sunday 11:59 PM PT"]},
+        "Submit Assignment A7 by Sunday 11:59 PM PT"]},
 ]
 
 if __name__ == "__main__":

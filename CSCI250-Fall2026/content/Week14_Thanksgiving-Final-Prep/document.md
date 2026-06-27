@@ -1,20 +1,20 @@
-# Week 14 — Thanksgiving Recess & Final Project Prep
+# Week 14 — Thanksgiving Recess & Capstone Evaluation Harness (M3)
 **CSCI 250 · Introduction to Artificial Intelligence · Fall 2026**
 *Week of November 23, 2026 · Online / Asynchronous · No new lecture content*
 
 ---
 
-> **This is a light week.** Palomar is in **Thanksgiving recess** — there are no new lectures, slides, or sample notebooks. Instead, use the quieter week to **lock in your Final Project plan** and submit **Assignment A7: Final Project Proposal**. Everything you build in Weeks 15–17 will hang off the decision you make now, so spend your reduced hours (~4–6) wisely.
+> **This is a light week.** Palomar is in **Thanksgiving recess** — there are no new lectures, slides, or sample notebooks. Your Capstone proposal is already done (that was **Milestone M1** back in Week 9), so this week is about **measuring what you've built**: complete **Capstone Milestone M3 — build your evaluation harness** using the shared helper `tools/eval_utils.py` (see `capstone/M3.md`). Spend your reduced hours (~4–6) turning "it feels better" into a number you can defend.
 
 ---
 
 ## Learning objectives
 By the end of this week you will be able to:
-1. Choose a **Final Project track** that fits your interests and the course stack (Claude, Gemini, local/open models — **no OpenAI**).
-2. Write a focused **proposal** that names the problem, the users, the data, and the AI components.
-3. Lay out a **milestone plan** across Weeks 15–17 that lands a working demo by the Dec 19 deadline.
-4. Read and internalize the **grading rubric** so you build the right things.
-5. Pick a realistic scope — **small and finished beats big and broken.**
+1. Build an **evaluation harness** for your Capstone using `tools/eval_utils.py` (Claude/Gemini as judge, exact-match, scorecard — **no OpenAI**).
+2. Assemble a small, honest **test set** of representative cases and pick **track-appropriate metrics**.
+3. Score your assistant and turn "it feels better" into a **baseline-vs-improved number**.
+4. Read the **scorecard** critically and write a 2–3 sentence read of what the numbers say.
+5. Keep scope realistic over a short holiday week — **a small honest test set beats a big sloppy one.**
 
 ---
 
@@ -25,10 +25,11 @@ You may use AI assistants heavily (this is an AI course), but **you own and must
 
 | Item | Detail |
 |---|---|
-| **Proposal (A7)** | Due **end of Week 14** (this week) |
-| **Project arc** | Built across Weeks 15–17 |
+| **Proposal (Capstone M1)** | Done in **Week 9** |
+| **This week (Capstone M3)** | **Evaluation harness** — due **end of Week 14** |
+| **Project arc** | Built across the Capstone milestones M1–M5 (Weeks 9–17) |
 | **Final submission** | Due **December 19, 2026, 11:59 PM PT** |
-| **Weight** | See syllabus (the largest single graded item) |
+| **Weight** | See syllabus (the Capstone is the largest single graded item) |
 | **Team size** | Solo, or pairs with instructor approval (scope scales up for pairs) |
 
 ---
@@ -68,12 +69,13 @@ Spread the work so nothing lands all at once in finals week.
 
 | When | Milestone |
 |---|---|
-| **Week 14 (now)** | Submit **A7 proposal**: track, problem, data/inputs, AI components, success criteria, milestone dates. |
-| **Week 15** | Spike the hardest unknown (e.g., the API call, the retrieval step, the agent loop). Get a **"hello world" end-to-end** path working, even if ugly. |
-| **Week 16** | Build the core feature(s). Wire in your real data. Start the report's design section. |
-| **Week 17** | Evaluate, polish, fix the top bugs, record the demo, finish the report, prep the presentation. **Submit by Dec 19.** |
+| **Week 9** | **M1 — proposal + "My Assistant" v1** (done). |
+| **Week 11** | **M2 — core build**: your assistant's central capability runs end-to-end. |
+| **Week 14 (now)** | **M3 — evaluation harness**: build a scorecard with `tools/eval_utils.py` and report a baseline-vs-improved number. |
+| **Week 16** | **M4 — hardening / polish**: fix the top failures the harness exposed; wire in real data; start the report. |
+| **Week 17** | **M5 — finals**: final eval, demo, report, and presentation. **Submit by Dec 19.** |
 
-**Rule of thumb:** if you do not have *something* running end-to-end by the end of Week 15, **cut scope** immediately.
+**Rule of thumb:** if your M3 harness can't yet score your assistant on a handful of cases, **shrink the test set** until it can — a working scorecard now beats a perfect one never.
 
 ---
 
@@ -107,25 +109,27 @@ Use these as starting points — **narrow them down**, don't copy them wholesale
 ---
 
 ## 7. Reading & videos
-- **Final Project Proposal (A7) prompt** and the **rubric above** (Canvas) — required.
+- **Capstone Milestone M3 handout** (`capstone/M3.md`) and the **rubric above** (Canvas) — required.
 - Re-skim your notes from the track week you chose (10/11 RAG, 12 Claude Code, 13 Agents/MCP).
 - *A Practical Guide to Building Agents* and the *Compact Guide to LLMs* (Canvas resources) — for Tracks B and A/E.
 - Optional: browse past student demos (Canvas) for scope calibration.
 
 ---
 
-## 8. Lab — Assignment A7 (Final Project Proposal, due Sunday 11:59 PM PT)
-Submit a **1-page proposal** (a form or short doc) containing:
+## 8. Lab — Capstone Milestone M3: Evaluation Harness (due Sunday 11:59 PM PT)
+This holiday week's graded deliverable is **Capstone Milestone M3 — build your evaluation harness** (see `capstone/M3.md`). The goal is to **measure your assistant, not just vibe-check it**: turn "it feels better" into "it scored 3.1 → 4.2." Use the shared helper `tools/eval_utils.py`, which gives you `llm_judge` (Claude or Gemini as judge), `exact_match`, and `scorecard`, and degrades gracefully with no API key so notebooks never crash.
 
-1. **Title** and **track** (A–E).
-2. **Problem & users:** what does it do, and for whom (2–3 sentences)?
-3. **Inputs/data:** what data, documents, images, or dataset will you use? Where does it come from?
-4. **AI components:** which models (Claude / Gemini / local) and techniques (RAG / agent / multimodal / fine-tune / eval)?
-5. **Success criteria:** how will you know it works? (1–2 measurable checks.)
-6. **Milestones:** one line each for Weeks 15, 16, 17.
-7. **AI-Use note:** one line on how you plan to use AI assistants.
+1. **Build a test set** of 8–15 representative cases — reuse the inputs you collected during M2. Each case is a dict; include `expected` where you know the right answer.
+2. **Score with `eval_utils`.** For example:
+   ```python
+   from eval_utils import llm_judge, exact_match, scorecard
+   rows = [{**c, **llm_judge(c["q"], run_my_assistant(c["q"]), rubric)} for c in cases]
+   scorecard(rows)
+   ```
+3. **Pick track-appropriate metrics:** RAG → the **RAG triad** (relevant retrieval / grounded answer / answers the question); Agent → **task success rate** + correct tool selection; Multimodal → **field accuracy** via `exact_match`; Fine-tuned → **before vs. after** on the same cases.
+4. **Report a baseline-vs-improved number:** run the scorecard on at least two versions of your assistant and record both averages, plus a 2–3 sentence read of what the numbers say.
 
-*A7 is graded for completeness and feasibility. The instructor will reply with scope feedback — read it before Week 15.*
+*M3 is a **4-pt Capstone checkpoint** (see the rubric in `capstone/M3.md`). Submit a runnable harness plus a scorecard with real numbers — evidence beats vibes. Keep it light: this is a ~4–6 hour holiday week.*
 
 ---
 

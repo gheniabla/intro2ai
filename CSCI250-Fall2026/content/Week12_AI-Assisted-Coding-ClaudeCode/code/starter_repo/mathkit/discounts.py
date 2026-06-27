@@ -1,7 +1,7 @@
 """Pricing helpers.
 
 `apply_discount` already works and has passing tests.
-`best_price` is INCOMPLETE — your Lab A6 task is to finish it (with AI help)
+`best_price` is INCOMPLETE — your Lab A9 task is to finish it (with AI help)
 so the failing tests in tests/test_discounts.py pass. Keep the signatures.
 """
 
@@ -31,6 +31,6 @@ def best_price(price, coupons):
       * never return a negative number
       * round to 2 decimals
 
-    TODO (Lab A6): implement this. Hint: you can reuse apply_discount().
+    TODO (Lab A9): implement this. Hint: you can reuse apply_discount().
     """
-    raise NotImplementedError("best_price is your Lab A6 task")
+    raise NotImplementedError("best_price is your Lab A9 task")
