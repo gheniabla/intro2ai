@@ -17,6 +17,9 @@
 
 📱 **Scan to open this course repo** · **https://github.com/gheniabla/intro2ai**
 
+🎓 **Ready to enroll?** → **[How to Register at Palomar College](https://www.palomar.edu/how-to-register/)**
+Questions or trouble enrolling? Email **[gabla@palomar.edu](mailto:gabla@palomar.edu)**
+
 </div>
 
 ---
