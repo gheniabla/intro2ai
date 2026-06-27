@@ -1,153 +1,172 @@
-"""Build the CSCI 250 Fall 2026 promotional flyer (PDF + PNG) with matplotlib.
-Run: python build_flyer.py   ->  CSCI250-Flyer-Fall2026.pdf / .png
+"""Build the CSCI 250 Fall 2026 promotional flyer (PDF + PNG).
+
+Uses reportlab for crisp, auto-wrapping typography (text can never overlap) and
+PyMuPDF to render a PNG preview. Run: python build_flyer.py
 """
 import os
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, FancyBboxPatch
-import matplotlib.image as mpimg
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import HexColor, white
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import ParagraphStyle
+import fitz  # PyMuPDF
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 QR = os.path.join(HERE, "..", "..", "assets", "qr-intro2ai.png")
+PDF = os.path.join(HERE, "CSCI250-Flyer-Fall2026.pdf")
+PNG = os.path.join(HERE, "CSCI250-Flyer-Fall2026.png")
 
-NAVY = "#0B1F3A"; TEAL = "#128C8C"; LIGHT = "#F2F5F8"
-INK = "#1A1A1A"; GREY = "#5B6470"; GREEN = "#2E8B57"; CREAM = "#CFE3E3"; MIST = "#9FC6C6"
-W, H = 8.5, 11.0  # inches
+NAVY = HexColor("#0B1F3A"); TEAL = HexColor("#128C8C"); LIGHT = HexColor("#EEF2F6")
+INK = HexColor("#222428"); GREY = HexColor("#5B6470"); GREEN = HexColor("#2E8B57")
+CREAM = HexColor("#CFE3E3"); MIST = HexColor("#9FC6C6")
 
-fig = plt.figure(figsize=(W, H))
-ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
+W, Hh = letter            # 612 x 792
+M = 50                    # side margin
+CW = W - 2 * M            # content width
+c = canvas.Canvas(PDF, pagesize=letter)
 
-def band(y, h, color, x=0, w=W):
-    ax.add_patch(Rectangle((x, y), w, h, color=color, zorder=0))
 
-def txt(x, y, s, size, color=INK, weight="normal", ha="left", va="baseline", style="normal"):
-    ax.text(x, y, s, fontsize=size, color=color, fontweight=weight, ha=ha, va=va,
-            style=style, family="DejaVu Sans", zorder=3)
+def para(text, size, color, leading=None, bold=False, align=0, bullet=None,
+         left_indent=0, font="Helvetica"):
+    st = ParagraphStyle(
+        "s", fontName=("Helvetica-Bold" if bold else font), fontSize=size,
+        leading=leading or size * 1.32, textColor=color, alignment=align,
+        leftIndent=left_indent, bulletIndent=0, bulletFontName="Helvetica-Bold",
+        bulletFontSize=size, bulletColor=TEAL)
+    return Paragraph(text, st, bulletText=bullet)
 
-# ---------- Header (navy) ----------
-band(H - 1.85, 1.85, NAVY)
-txt(0.6, H - 0.62, "PALOMAR COLLEGE  ·  COMPUTER SCIENCE (CSIT)", 11.5, MIST, "bold")
-txt(0.6, H - 1.06, "Introduction to Artificial Intelligence", 25, "white", "bold")
-txt(0.6, H - 1.55, "CSCI 250   ·   Fall 2026   ·   4 Units   ·   Online", 14.5, CREAM, "bold")
 
-# teal rule
-band(H - 1.92, 0.07, TEAL)
+def draw(p, x, top, width):
+    """Draw a flowable so its TOP sits at y=top. Returns the new y (bottom)."""
+    _, h = p.wrapOn(c, width, Hh)
+    p.drawOn(c, x, top - h)
+    return top - h
 
-# ---------- Tagline (light) ----------
-band(H - 2.5, 0.58, LIGHT)
-band(H - 2.5, 0.58, TEAL, x=0, w=0.09)
-txt(0.62, H - 2.24, "Now with deep, hands-on coverage of Large Language Models,", 13, NAVY, "bold")
-txt(0.62, H - 2.46, "Generative AI & AI-assisted coding.", 13, NAVY, "bold")
 
-# ---------- Intro ----------
-intro = [
-    "Artificial Intelligence is the defining technology of the decade — and generative AI",
-    "has put it in everyone's hands. In this project-based, beginner-friendly course you'll go",
-    "from the fundamentals of machine learning to building and deploying your own AI",
-    "applications using the same tools professionals use today. No expensive textbook and",
-    "no costly hardware — everything runs free in your browser.",
-]
-y = H - 2.95
-for line in intro:
-    txt(0.6, y, line, 11.3, "#2b2b2b"); y -= 0.26
+# ───────────────────────── Header (navy) ─────────────────────────
+HEAD = 168
+c.setFillColor(NAVY); c.rect(0, Hh - HEAD, W, HEAD, fill=1, stroke=0)
+c.setFillColor(TEAL); c.rect(0, Hh - HEAD - 6, W, 6, fill=1, stroke=0)  # teal rule
 
-# ---------- What you'll build & learn ----------
-y_h = y - 0.12
-txt(0.6, y_h, "What you'll build & learn", 15, NAVY, "bold")
-band(0.6, 0.0, LIGHT)  # noop placeholder
-ax.add_patch(Rectangle((0.6, y_h - 0.12), W - 1.2, 0.02, color=LIGHT, zorder=1))
+c.setFillColor(MIST); c.setFont("Helvetica-Bold", 11)
+c.drawString(M, Hh - 40, "P A L O M A R   C O L L E G E   ·   C O M P U T E R   S C I E N C E   ( C S I T )")
+c.setFillColor(white); c.setFont("Helvetica-Bold", 30)
+c.drawString(M, Hh - 78, "Introduction to")
+c.drawString(M, Hh - 112, "Artificial Intelligence")
+c.setFillColor(CREAM); c.setFont("Helvetica-Bold", 15)
+c.drawString(M, Hh - 144, "CSCI 250    ·    Fall 2026    ·    4 Units    ·    Online")
+
+# ───────────────────────── Tagline (light) ───────────────────────
+TAG_TOP = Hh - HEAD - 6
+TAG_H = 50
+c.setFillColor(LIGHT); c.rect(0, TAG_TOP - TAG_H, W, TAG_H, fill=1, stroke=0)
+c.setFillColor(TEAL); c.rect(0, TAG_TOP - TAG_H, 8, TAG_H, fill=1, stroke=0)
+draw(para("Now with deep, hands-on coverage of <b>Large Language Models</b>, "
+          "<b>Generative AI</b> &amp; <b>AI-assisted coding</b>.", 13.5, NAVY, leading=18),
+     M, TAG_TOP - 16, CW)
+
+# ───────────────────────── Intro ─────────────────────────────────
+y = TAG_TOP - TAG_H - 26
+y = draw(para(
+    "Artificial Intelligence is the defining technology of the decade — and generative AI has "
+    "put it in everyone's hands. In this <b>project-based, beginner-friendly</b> course you'll go "
+    "from the fundamentals of machine learning to <b>building and deploying your own AI "
+    "applications</b> using the same tools professionals use today. No expensive textbook and no "
+    "costly hardware — everything runs free in your browser.",
+    11.5, INK, leading=16.5), M, y, CW)
+
+# ───────────────────────── What you'll build & learn ─────────────
+y -= 24
+c.setFillColor(NAVY); c.setFont("Helvetica-Bold", 15)
+c.drawString(M, y, "What you'll build & learn")
+c.setFillColor(TEAL); c.rect(M, y - 7, 64, 3, fill=1, stroke=0)  # accent underline
+y_cols = y - 22
 
 left = [
-    "ML & neural-network foundations in Python",
-    "How LLMs really work — build a tokenizer",
-    "    and attention from scratch",
-    "Prompt engineering & reasoning",
-    "Retrieval-Augmented Generation (RAG)",
-    "    over your own data",
+    "<b>ML &amp; neural-network foundations</b> in Python",
+    "<b>How LLMs really work</b> — build a tokenizer and attention from scratch",
+    "<b>Prompt engineering &amp; reasoning</b> with Claude &amp; Gemini",
+    "<b>Retrieval-Augmented Generation (RAG)</b> over your own data",
 ]
 right = [
-    "AI agents & tool use (Model Context",
-    "    Protocol)",
-    "AI-assisted coding with Claude Code",
-    "Multimodal AI, fine-tuning & evaluation",
-    "Capstone: build & deploy your own",
-    "    AI assistant",
+    "<b>AI agents &amp; tool use</b> (Model Context Protocol)",
+    "<b>AI-assisted coding</b> with Claude Code",
+    "<b>Multimodal AI, fine-tuning &amp; evaluation</b>",
+    "<b>Capstone:</b> build &amp; deploy your own AI assistant",
 ]
+GAP = 34
+colw = (CW - GAP) / 2
 
-def bullets(items, x):
-    yy = y_h - 0.4
+
+def column(items, x, top):
+    yy = top
     for it in items:
-        if it.startswith("    "):
-            txt(x + 0.28, yy, it.strip(), 11, "#222")
-        else:
-            txt(x + 0.04, yy, "▸", 11.5, TEAL, "bold")
-            txt(x + 0.28, yy, it, 11, "#222")
-        yy -= 0.275
+        yy = draw(para(it, 11.5, INK, leading=15.5, bullet="•", left_indent=15), x, yy, colw)
+        yy -= 11   # space between bullets
     return yy
 
-yl = bullets(left, 0.6)
-yr = bullets(right, 4.5)
-y_after = min(yl, yr) - 0.05
 
-# ---------- Pills ----------
+yl = column(left, M, y_cols)
+yr = column(right, M + colw + GAP, y_cols)
+y = min(yl, yr)
+
+# ───────────────────────── Highlight pills ───────────────────────
+y -= 16
 pills = [("100% Online", TEAL), ("Asynchronous", NAVY), ("$0 Textbook Cost", GREEN),
          ("Hands-on Projects", NAVY), ("Portfolio Capstone", TEAL)]
-PSIZE = 10.0
-fig.canvas.draw()
-renderer = fig.canvas.get_renderer()
-px_per_in = fig.dpi
-gap = 0.13
-widths = []
-for label, _ in pills:
-    t = ax.text(0, -5, label, fontsize=PSIZE, fontweight="bold", family="DejaVu Sans")
-    bb = t.get_window_extent(renderer=renderer)
-    widths.append(bb.width / px_per_in + 0.30)  # text width + horizontal padding
-    t.remove()
-max_w = W - 1.2  # honor 0.6in margins
+PS = 10.5; padx = 13; gap = 10; ph = 22
+widths = [c.stringWidth(l, "Helvetica-Bold", PS) + 2 * padx for l, _ in pills]
 total = sum(widths) + gap * (len(pills) - 1)
-if total > max_w:  # scale-to-fit so nothing clips
-    s = max_w / total
-    widths = [w * s for w in widths]
-    gap *= s
-    total = max_w
-xstart = (W - total) / 2
-yp = y_after - 0.1
-for (label, color), wpill in zip(pills, widths):
-    ax.add_patch(FancyBboxPatch((xstart, yp - 0.15), wpill, 0.30,
-                 boxstyle="round,pad=0.015,rounding_size=0.15", linewidth=0,
-                 facecolor=color, zorder=2))
-    txt(xstart + wpill / 2, yp, label, PSIZE, "white", "bold", ha="center", va="center")
-    xstart += wpill + gap
+if total > CW:
+    s = CW / total; widths = [w * s for w in widths]; gap *= s; total = CW
+x = (W - total) / 2
+for (label, color), pw in zip(pills, widths):
+    c.setFillColor(color); c.roundRect(x, y - ph, pw, ph, ph / 2, fill=1, stroke=0)
+    c.setFillColor(white); c.setFont("Helvetica-Bold", PS)
+    c.drawCentredString(x + pw / 2, y - ph + 7, label)
+    x += pw + gap
+y -= ph
 
-# ---------- Tools ----------
-yt = yp - 0.5
-txt(W / 2, yt, "Tools you'll use:  Anthropic Claude  ·  Claude Code  ·  Google Gemini  ·  Hugging Face  ·  Ollama",
-    11, GREY, ha="center")
+# ───────────────────────── Tools line ────────────────────────────
+y -= 22
+c.setFillColor(GREY); c.setFont("Helvetica", 11)
+c.drawCentredString(W / 2, y, "Tools you'll use:   Anthropic Claude   ·   Claude Code   ·   "
+                              "Google Gemini   ·   Hugging Face   ·   Ollama")
 
-# ---------- Footer (navy) ----------
-FH = 1.7
-band(0, FH, NAVY)
-txt(0.6, FH - 0.4, "Instructor:", 10.5, MIST, "bold")
-txt(1.5, FH - 0.4, "Gheni Abla   ·   gabla@palomar.edu", 10.5, "white")
-txt(0.6, FH - 0.7, "Prerequisite:", 10.5, MIST, "bold")
-txt(1.65, FH - 0.7, "CSCI 114 (grade of “C” or better)", 10.5, "white")
-txt(0.6, FH - 1.0, "Format:", 10.5, MIST, "bold")
-txt(1.35, FH - 1.0, "Online, fully asynchronous", 10.5, "white")
-txt(0.6, FH - 1.36, "Enroll →  palomar.edu/how-to-register", 13, "#7FE3E3", "bold")
-txt(0.6, FH - 1.6, "Questions or trouble enrolling?  Email gabla@palomar.edu", 10, CREAM)
+# ───────────────────────── Footer (navy) ─────────────────────────
+FH = 140
+c.setFillColor(NAVY); c.rect(0, 0, W, FH, fill=1, stroke=0)
+c.setFillColor(TEAL); c.rect(0, FH, W, 4, fill=1, stroke=0)
 
-# QR on right of footer
+# QR (right) — draw first so we know the safe text width
+qs = 92; qx = W - M - qs; qy = (FH - qs) / 2 + 4
+c.setFillColor(white); c.roundRect(qx - 7, qy - 7, qs + 14, qs + 14, 7, fill=1, stroke=0)
 if os.path.exists(QR):
-    img = mpimg.imread(QR)
-    qx, qy, qs = W - 1.85, FH - 1.42, 1.18
-    ax.add_patch(Rectangle((qx - 0.06, qy - 0.06), qs + 0.12, qs + 0.12, color="white", zorder=2))
-    ax.imshow(img, extent=[qx, qx + qs, qy, qy + qs], zorder=3, aspect="auto")
-    txt(qx + qs / 2, qy - 0.16, "Scan for course info & enrollment", 8, MIST, ha="center")
+    c.drawImage(QR, qx, qy, qs, qs, mask="auto")
+c.setFillColor(MIST); c.setFont("Helvetica", 8)
+c.drawCentredString(qx + qs / 2, qy - 17, "Scan for course info & enrollment")
 
-out_pdf = os.path.join(HERE, "CSCI250-Flyer-Fall2026.pdf")
-out_png = os.path.join(HERE, "CSCI250-Flyer-Fall2026.png")
-fig.savefig(out_pdf)
-fig.savefig(out_png, dpi=150)
-print("wrote", out_pdf)
-print("wrote", out_png)
+# Footer info (left) — width stops well before the QR
+finfo_w = qx - M - 24
+ftop = FH - 24
+def line(lbl, val, yy):
+    c.setFillColor(MIST); c.setFont("Helvetica-Bold", 10.5); c.drawString(M, yy, lbl)
+    c.setFillColor(white); c.setFont("Helvetica", 10.5)
+    c.drawString(M + c.stringWidth(lbl, "Helvetica-Bold", 10.5) + 6, yy, val)
+line("Instructor:", "Gheni Abla   ·   gabla@palomar.edu", ftop)
+line("Prerequisite:", "CSCI 114 (grade of “C” or better)", ftop - 20)
+line("Format:", "Online, fully asynchronous", ftop - 40)
+c.setFillColor(HexColor("#7FE3E3")); c.setFont("Helvetica-Bold", 14)
+c.drawString(M, ftop - 70, "Enroll →  palomar.edu/how-to-register")
+c.setFillColor(CREAM); c.setFont("Helvetica", 9.5)
+c.drawString(M, ftop - 88, "Questions or trouble enrolling?  Email gabla@palomar.edu")
+
+c.showPage(); c.save()
+
+# ───────────────────────── PNG preview ───────────────────────────
+doc = fitz.open(PDF)
+pix = doc[0].get_pixmap(dpi=150)
+pix.save(PNG)
+print("wrote", PDF)
+print("wrote", PNG)
