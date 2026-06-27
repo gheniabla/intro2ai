@@ -47,6 +47,12 @@ slides = [
              ").content[0].text",
      "caption": "Judge hygiene: clear rubric, structured output, low temp, watch bias",
      "code_size": 14},
+    {"type": "bullets", "title": "LLM-as-Judge — Three Biases to Counter", "bullets": [
+        "Position bias: favors the answer shown first → swap order & average",
+        "Verbosity bias: over-rewards longer answers → score conciseness, cap length",
+        "Self-preference bias: rates its OWN family higher → use a cross-family judge",
+        ("Notebook runs TWO judges (Claude + Gemini) to expose self-preference", 1),
+        ("Always spot-check the judge against human judgment", 1)]},
 
     {"type": "section", "title": "Building an Eval Harness"},
     {"type": "code", "title": "It's Just Cases + Scorer + Average",
@@ -72,6 +78,15 @@ slides = [
         "Never blindly eval/exec model output",
         "Constrain tools & permissions; least privilege",
         "Validate outputs before acting on them"]},
+    {"type": "two_col", "title": "Responsible AI — A Design Requirement",
+     "left_title": "People",
+     "left": ["Bias & fairness: test per-group, human in loop",
+              "Privacy/PII: redact, retain less, check terms",
+              "Transparency: disclose AI, label media, cite"],
+     "right_title": "The world",
+     "right": ["Jobs: augment, keep accountability",
+               "Misinformation: persuasive fakes at scale",
+               "Environmental cost: smallest sufficient model"]},
 
     {"type": "section", "title": "Wrap-Up & Final Project"},
     {"type": "bullets", "title": "Final Project (Capstone M5) — Due Dec 19, 11:59 PM PST", "bullets": [

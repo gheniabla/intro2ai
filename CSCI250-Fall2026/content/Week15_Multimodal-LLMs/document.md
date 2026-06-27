@@ -118,6 +118,16 @@ So a diffusion model "sculpts" an image out of noise, guided by your words. This
 
 ---
 
+## 7.1 Provenance & watermarking — labeling AI media
+Once you can *generate* media, the question becomes: how does anyone tell it apart from a real photo? **Provenance** is the answer — a verifiable record of where a piece of media came from. Two complementary approaches are emerging:
+
+- **Watermarking** embeds an *invisible* signal directly into the pixels (or audio samples) that survives cropping and compression and can be detected later. **SynthID** (Google DeepMind) is the leading example — it tags images, audio, and text that Gemini/Imagen produce so they can be identified as AI-generated even after edits.
+- **Content Credentials / C2PA** attach *signed metadata* to a file — a tamper-evident manifest recording what tool made it and how it was edited. Adobe, cameras, and many platforms now read and display this "nutrition label" for media.
+
+Why it matters: **deepfakes** and AI-generated misinformation make labeling a trust issue, and regulation is catching up — the **EU AI Act** requires that AI-generated or manipulated content be **disclosed**. Expect "this image was AI-generated" labels to become standard. As a builder, prefer tools that support provenance, and **disclose** AI-generated media you ship — the same disclosure habit you've practiced all semester.
+
+---
+
 ## 8. Choosing & calling a vision model
 - **Claude `claude-sonnet-4-6`** — strong reasoning over images, good at structured extraction and "explain this diagram."
 - **Gemini `gemini-2.5-flash`** — fast and cheap; great default for description/OCR. Use **`gemini-2.5-pro`** when you need deeper reasoning on a hard image.
@@ -148,4 +158,4 @@ There is **no separate weekly assignment** this week. This is **Capstone work** 
 ---
 
 ## Key terms
-**modality**, **multimodal**, **vision-language model (VLM)**, **vision encoder**, **image patch/token**, **base64**, **OCR**, **chart reading**, **structured/JSON output**, **visual question answering**, **diffusion model**, **denoising**, **image generation**, **alt-text**, **hallucination**.
+**modality**, **multimodal**, **vision-language model (VLM)**, **vision encoder**, **image patch/token**, **base64**, **OCR**, **chart reading**, **structured/JSON output**, **visual question answering**, **diffusion model**, **denoising**, **image generation**, **alt-text**, **hallucination**, **provenance**, **watermarking**, **SynthID**, **C2PA / Content Credentials**, **deepfake**, **disclosure**.

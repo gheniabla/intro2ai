@@ -8,6 +8,10 @@ Run:
          -d '{"message": "What is 12 + 30, and the price of coffee?"}'
 
 NEVER hard-code your API key here — it is read from the environment.
+
+Guardrails (matching Week 13 Notebook 3): an ALLOWED_TOOLS allow-list (least
+privilege) and a simple prompt-injection pattern check on tool output. The
+deployable artifact enforces the same defenses the week teaches.
 """
 import os
 import re
@@ -23,6 +27,31 @@ def get_price(item):
     return {"coffee": 4, "tea": 3, "cocoa": 5}.get(str(item).lower(), 0)
 
 TOOLS = {"add": add, "get_price": get_price}
+
+# --------------------------------------------------------------- guardrails
+# Least privilege: the agent may ONLY call tools named here. A tool the model
+# requests that is not in this set is refused, no matter what any text says.
+ALLOWED_TOOLS = {"add", "get_price"}
+
+INJECTION_PATTERNS = [
+    "ignore all previous", "ignore previous instructions",
+    "disregard the above", "system prompt", "reply only",
+]
+
+def looks_injected(text):
+    """Return the injection patterns found in (untrusted) tool output, if any."""
+    t = (text or "").lower()
+    return [p for p in INJECTION_PATTERNS if p in t]
+
+def run_tool(name, **kwargs):
+    """Run a tool through the allow-list + scan its output for injection.
+    Tool output is treated as DATA, never as instructions."""
+    if name not in ALLOWED_TOOLS:
+        return f"[blocked] tool {name!r} not in ALLOWED_TOOLS"
+    out = TOOLS[name](**kwargs)
+    if looks_injected(str(out)):
+        return f"[flagged: possible injection in tool output] {out}"
+    return out
 
 TOOL_SCHEMAS = [
     {"name": "add", "description": "Add two numbers.",
@@ -50,7 +79,7 @@ def run_claude_agent(user_msg, max_turns=5):
         results = []
         for b in resp.content:
             if b.type == "tool_use":
-                out = TOOLS[b.name](**b.input)        # ACT
+                out = run_tool(b.name, **b.input)     # ACT (allow-list + injection scan)
                 results.append({"type": "tool_result",
                                 "tool_use_id": b.id, "content": str(out)})  # OBSERVE
         messages.append({"role": "user", "content": results})
@@ -68,7 +97,7 @@ def run_fallback_agent(user_msg, max_turns=5):
             calls.append(("get_price", {"item": item}))
     obs = []
     for name, args in calls[:max_turns]:
-        obs.append(f"{name}={TOOLS[name](**args)}")
+        obs.append(f"{name}={run_tool(name, **args)}")   # allow-list + injection scan
     return "(fallback) " + (", ".join(obs) if obs else "no tool matched")
 
 

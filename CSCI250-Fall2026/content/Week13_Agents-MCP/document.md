@@ -9,7 +9,7 @@ By the end of this week you will be able to:
 1. Define an **AI agent** and trace the **agent loop**: *reason → act → observe → repeat*.
 2. Explain **tool/function calling** and write tool definitions for **Claude** and **Gemini**.
 3. Build a small **tool-using agent** that decides when to call tools and incorporates the results.
-4. Describe the **Model Context Protocol (MCP)** — client vs. server — and why a shared protocol matters.
+4. Describe the **Model Context Protocol (MCP)** — client vs. server — and **build a minimal MCP server** (one tool + one resource) that a client can use.
 5. **Serve** an agent behind a minimal **Flask** web app so others can use it over HTTP.
 6. Reason about agent **reliability and safety**: loops, bad tool calls, **prompt injection** via tool output, and keeping a human in control.
 7. **Evaluate** an agent: score whether it chose the right tool and gave the right answer, and read a **scorecard**.
@@ -147,6 +147,24 @@ Think of MCP as **"USB-C for AI tools"**: one standard plug instead of a custom 
 
 In Claude Code you add a server with `claude mcp add ...`; it then appears as tools the agent can call. You don't need to build an MCP server for A10 — but you should be able to **explain the client/server split and why a shared protocol beats one-off integrations.**
 
+### See it in code
+Don't just read about MCP — **build one**. `code/04_mcp_intro.ipynb` defines a **minimal MCP server** exposing **one tool** (`get_price`) and **one resource** (`menu://today`), then connects a **client** that lists and calls them — printing `get_price(coffee) -> 4`. It uses the official `mcp` Python SDK (`FastMCP`) when available, with a no-dependency stand-in that mirrors the same server structure so it always runs (Colab included). It also shows the `claude mcp add ...` registration that makes your server's tools/resources show up inside Claude Code.
+
+### MCP security note — connecting a server is an attack surface
+An MCP server is **external code feeding your agent data and actions**, so the agent-safety rules from Section 7 apply directly to it:
+- **Prompt injection via tool/resource results:** a server's output can carry *"ignore previous instructions…"*. Treat MCP results as **untrusted data, never instructions** — scan them just like any tool output.
+- **Over-broad tool permissions:** only connect servers you trust, and grant the **least privilege** needed; an `ALLOWED_TOOLS` allow-list still applies even when the tool arrives via MCP.
+- **Human-in-the-loop** for consequential server tools (writes, payments, sending mail).
+
+---
+
+## 5b. Agent memory
+A bare agent forgets everything between turns. Real assistants add **memory**:
+- **Working / short-term memory** — the current conversation in the context window (and a running scratchpad). Cheap, but bounded by the context limit and lost when the session ends.
+- **Long-term memory** — persisted across sessions, usually in three flavors: **semantic** (facts: *"the user prefers metric units"*), **episodic** (past events/conversations: *"last week we debugged the Flask app"*), and **procedural** (learned how-to: tool recipes, workflows).
+
+Long-term memory is typically **vector-store-backed**: write facts/episodes as embeddings, then **retrieve** the relevant ones at each turn (this is RAG from Week 11, pointed at the agent's own history). Libraries like **Mem0** and **Letta** package this pattern so you don't hand-roll storage and retrieval. For A10 a short scratchpad is enough — but know the taxonomy, because "why did the agent forget?" is almost always a memory-design question.
+
 ---
 
 ## 6. Serving an agent with Flask
@@ -172,7 +190,7 @@ curl -X POST localhost:5000/ask \
      -d '{"message": "What is 12 + 30, and the price of coffee?"}'
 ```
 
-The full app is `code/02_agent_flask_app.ipynb` (and a runnable `code/agent_app.py`). It reads the API key from the environment — **never** hard-code keys in a web app.
+The full app is `code/02_agent_flask_app.ipynb` (and a runnable `code/agent_app.py`). It reads the API key from the environment — **never** hard-code keys in a web app. The deployable `agent_app.py` also wires in the Section 7 guardrails — an `ALLOWED_TOOLS` allow-list and an injection-pattern scan on tool output — so the artifact you ship matches what this week teaches, not just a bare loop.
 
 ---
 
@@ -246,4 +264,4 @@ See `code/03_agent_safety_and_eval.ipynb` — a live injection attack vs. a guar
 ---
 
 ## Key terms
-**agent**, **agent loop (reason→act→observe)**, **tool / function calling**, **tool schema**, **tool_use / tool_result**, **automatic function calling**, **Model Context Protocol (MCP)**, **MCP server / MCP client**, **resource / prompt (MCP)**, **max-turns guard**, **least privilege**, **prompt injection (via tool output)**, **tool permissioning**, **guardrail**, **agent evaluation**, **scorecard**, **LLM-as-judge**, **Flask endpoint**.
+**agent**, **agent loop (reason→act→observe)**, **tool / function calling**, **tool schema**, **tool_use / tool_result**, **automatic function calling**, **Model Context Protocol (MCP)**, **MCP server / MCP client**, **resource / prompt (MCP)**, **MCP attack surface**, **working / short-term memory**, **long-term memory (semantic / episodic / procedural)**, **vector-store-backed memory (Mem0 / Letta)**, **max-turns guard**, **least privilege**, **prompt injection (via tool output)**, **tool permissioning**, **ALLOWED_TOOLS allow-list**, **guardrail**, **agent evaluation**, **scorecard**, **LLM-as-judge**, **Flask endpoint**.

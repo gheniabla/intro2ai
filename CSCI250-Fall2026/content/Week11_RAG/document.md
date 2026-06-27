@@ -160,12 +160,33 @@ for i, m in enumerate(sources, 1):
     print(f"  [{i}] {m['source']} (chunk {m['chunk']})")
 ```
 
+> **⚠️ Responsible AI:** RAG **reduces** hallucination but doesn't eliminate it — a model can still misread or over-extrapolate from the retrieved text, so **always show sources** and let users verify. And retrieval **amplifies whatever bias is in your corpus**: if the source documents are skewed or wrong, grounded answers will be confidently skewed or wrong too.
+
 ---
 
-## 9. Evaluate RAG — measure, don't guess
+## 9. Modern RAG (2026) — beyond plain vector search
+Everything above — fixed-size chunks + pure **vector (dense) search** — is the **starting point**, and it's enough for your Capstone. But it has known weak spots: dense search can miss exact keywords (names, error codes, IDs), and the top-k by cosine similarity isn't always the *best* k. The 2026 baseline layers four upgrades on top. They're additive — reach for each one only when the simple pipeline visibly falls short.
+
+**1. Hybrid search (dense + keyword).** Run **dense** embedding similarity *and* a **keyword/BM25** search, then **fuse** the two ranked lists (a common recipe is *Reciprocal Rank Fusion*). Dense catches paraphrases ("how do I drop a class" ↔ "withdrawal policy"); keyword nails exact tokens dense embeddings blur (`CSCI250`, `48-hour`, a product SKU).
+*When to use:* your corpus has codes, names, or jargon, and pure vector search keeps missing the obvious chunk.
+
+**2. Reranking (cross-encoder).** Over-retrieve (say top-20), then have a small **cross-encoder** (e.g. `cross-encoder/ms-marco-MiniLM-L-6-v2`) score each *(question, chunk)* pair jointly and **reorder** them; keep the new top-3–5 for the prompt. A cross-encoder reads the question and chunk *together*, so it's far more accurate than the first-pass similarity — at the cost of running per candidate, which is why you only rerank the shortlist.
+*When to use:* retrieval pulls roughly the right region but the *best* chunk isn't landing in the top-k.
+
+**3. Contextual Retrieval (Anthropic's technique).** Before embedding, prepend a one-sentence **context blurb** to each chunk ("This chunk is from the Grading section of the CSCI 250 handbook; it explains final-project weighting."). A bare chunk like "It is 30 percent." is ambiguous; the situated version embeds and matches far better. The blurbs are usually generated cheaply by an LLM (e.g. Claude Haiku) at index time and benefit from prompt caching.
+*When to use:* chunks lose meaning out of context (lots of pronouns, tables, short fragments).
+
+**4. Agentic RAG.** Instead of always retrieving once, the **model decides** *whether*, *what*, and *how many times* to search — it can reformulate the query, do **multi-step** retrieval (look something up, then look up what it just learned), or skip retrieval entirely for a question it can answer directly. This is RAG meeting the **agent loop** (tool calling) you'll build in Week 13.
+*When to use:* questions need multiple lookups or sub-questions; a single retrieval can't gather everything at once. (Cost: more model calls and latency.)
+
+> **Rule of thumb:** start simple (dense + fixed chunks), **measure** with the RAG triad below, and add hybrid → reranking → contextual → agentic **only** where the numbers say the simple pipeline is the bottleneck. Notebook `code/04_hybrid_rerank.ipynb` shows hybrid retrieval + reranking in ~40 lines.
+
+---
+
+## 10. Evaluate RAG — measure, don't guess
 You can *feel* that an answer is good, but feelings don't scale and don't catch regressions when you tweak chunking next week. **Measure.** Notebook `code/03_rag_evaluation.ipynb` does this with the **RAG triad** and the course's shared `eval_utils.py`.
 
-### 9.1 The RAG triad
+### 10.1 The RAG triad
 The triad checks the **three links** in a RAG chain, each scored 1–5 by an **LLM-as-judge**:
 
 | Metric | Question it answers | Compares |
@@ -176,7 +197,7 @@ The triad checks the **three links** in a RAG chain, each scored 1–5 by an **L
 
 The power of the triad is that it **localizes** failure: a low score tells you *which* link broke — retrieval, faithfulness, or focus — instead of just "the answer was bad."
 
-### 9.2 Use the shared eval helpers
+### 10.2 Use the shared eval helpers
 Every week in this course scores outputs the same way, via `tools/eval_utils.py`:
 ```python
 from eval_utils import llm_judge, scorecard   # judge with Gemini or Claude; print a report card
@@ -186,7 +207,7 @@ result = llm_judge(question, answer, rubric)   # -> {"score": 4, "reason": "..."
 ```
 `llm_judge` uses **Gemini Flash** or **Claude Haiku** (the cheapest models) and **degrades to a transparent heuristic** with no key, so the notebook always runs.
 
-### 9.3 The discipline: baseline → change one thing → re-measure
+### 10.3 The discipline: baseline → change one thing → re-measure
 1. Pin a **fixed set of evaluation questions** (your test set) so runs are comparable.
 2. Score a **baseline** config and print a `scorecard` (average triad score).
 3. Change **one** thing (e.g. `chunk_size` 120 → 300).
@@ -198,7 +219,7 @@ scorecard(rows)   # per-question scores + an average you can track over time
 ```
 This is how you improve a RAG system **without fooling yourself**.
 
-### 9.4 Quick debugging order (when a score is low)
+### 10.4 Quick debugging order (when a score is low)
 1. **Low Context Relevance** → the right chunk wasn't retrieved. Print the retrieved text; fix `chunk_size`/`overlap` or `k` — *not* the prompt.
 2. **Low Groundedness** → the model is inventing facts. Strengthen the grounding instruction; lower temperature.
 3. **Low Answer Relevance** → reframe the question or fix the generator.
@@ -207,7 +228,7 @@ We return to formal **LLM evaluation** (eval harnesses, safety, bias) in Week 17
 
 ---
 
-## 10. Reading & videos
+## 11. Reading & videos
 - Lewis et al., *Retrieval-Augmented Generation* (2020) — skim the abstract & figure 1 (linked in Canvas).
 - LangChain docs — *RAG tutorial* (linked in Canvas).
 - Anthropic docs — *Long context & grounding tips* (linked in Canvas).
@@ -216,16 +237,17 @@ We return to formal **LLM evaluation** (eval harnesses, safety, bias) in Week 17
 
 ---
 
-## 11. Lab — Capstone Milestone M2 (due Sunday 11:59 PM PT)
+## 12. Lab — Capstone Milestone M2 (due Sunday 11:59 PM PT)
 This week's graded work is **Capstone Milestone M2 — Core Build** (see `capstone/M2.md`): "My Assistant" v2, where your assistant's **central capability works end-to-end**. The notebooks below give you the RAG backbone; use them to build (or feed) your M2 core engine:
 1. Run `code/01_rag_pipeline.ipynb` — the full load → chunk → embed → store → retrieve → ground → **generate (Claude + Gemini)** → cite pipeline over a small doc set.
 2. Run `code/02_rag_experiments.ipynb` — change `chunk_size`, `chunk_overlap`, and `k`; watch retrieval quality shift; try an out-of-scope question and confirm it answers "I don't know."
-3. Run `code/03_rag_evaluation.ipynb` — score the RAG triad with `llm_judge`, change the chunking, and **re-measure** with a `scorecard`. Decide which config you'd ship.
-4. **Build your M2 deliverable** per `capstone/M2.md`: get your assistant's core capability running end-to-end with visible output, and keep 5–10 representative inputs for your M3 eval set.
+3. Run `code/03_rag_evaluation.ipynb` — score the RAG triad with `llm_judge`, change the chunking, and **re-measure** with a `scorecard`. Decide which config you'd ship. *(Note the offline-eval caveat in its banner: without a key the judge and generator are heuristic, so Groundedness looks inflated/flat — use a key for real numbers.)*
+4. (Optional, modern) Run `code/04_hybrid_rerank.ipynb` — **hybrid retrieval** (dense + BM25, fused) and a **cross-encoder reranker**, with graceful degradation if packages are missing.
+5. **Build your M2 deliverable** per `capstone/M2.md`: get your assistant's core capability running end-to-end with visible output, and keep 5–10 representative inputs for your M3 eval set.
 
 *Submit M2 per `capstone/M2.md`. The pipeline you build here is reusable course infrastructure and the backbone of your Capstone.*
 
 ---
 
 ## Key terms
-**RAG**, **hallucination**, **grounding**, **context window**, **chunk / chunking**, **chunk_overlap**, **embedding**, **vector store**, **ChromaDB**, **retrieval**, **top-k**, **metadata**, **citation / source attribution**, **faithfulness**, **"I don't know" fallback**, **RAG triad**, **context relevance**, **groundedness**, **answer relevance**, **LLM-as-judge**, **scorecard**, **baseline / re-measure**.
+**RAG**, **hallucination**, **grounding**, **context window**, **chunk / chunking**, **chunk_overlap**, **embedding**, **vector store**, **ChromaDB**, **retrieval**, **top-k**, **metadata**, **citation / source attribution**, **faithfulness**, **"I don't know" fallback**, **RAG triad**, **context relevance**, **groundedness**, **answer relevance**, **LLM-as-judge**, **scorecard**, **baseline / re-measure**, **hybrid search**, **BM25**, **dense vs keyword retrieval**, **score fusion / reciprocal rank fusion**, **reranking**, **cross-encoder**, **Contextual Retrieval**, **agentic RAG**, **multi-step retrieval**.

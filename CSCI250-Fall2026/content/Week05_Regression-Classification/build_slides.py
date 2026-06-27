@@ -30,6 +30,12 @@ slides = [
      "left": ["Average absolute miss", "Same units as y", "Easy to explain"],
      "right_title": "RMSE",
      "right": ["Squares errors first", "Punishes big misses", "RMSE ≥ MAE always"]},
+    {"type": "bullets", "title": "Reading the Coefficients (reg.coef_)", "bullets": [
+        "One weight per feature (+ intercept)",
+        "Change in target per one-unit rise in that feature, others fixed",
+        "Sign = direction (up/down); magnitude = strength of pull",
+        "Largest |coef| = most influential feature for this model",
+        ("Association, not causation — and compare magnitudes only when scaled", 1)]},
 
     {"type": "section", "title": "Classification — Predicting a Category"},
     {"type": "two_col", "title": "Three Workhorse Classifiers",
@@ -41,6 +47,15 @@ slides = [
      "right": ["k-NN: vote of k neighbors",
                "Decision tree: yes/no flowchart",
                "Trees overfit if too deep"]},
+
+    {"type": "code", "title": "Feature Scaling: Why k-NN Needs It",
+     "code": "from sklearn.preprocessing import StandardScaler\n"
+             "from sklearn.pipeline import make_pipeline\n\n"
+             "# k-NN votes by DISTANCE -> a big-range feature dominates\n"
+             "knn = make_pipeline(StandardScaler(),       # mean 0, std 1\n"
+             "                    KNeighborsClassifier(n_neighbors=5))\n"
+             "# same k-NN scores HIGHER with scaling (see notebook 2)",
+     "caption": "Scale for k-NN / SVM / neural nets. Trees split one feature at a time — scale-invariant."},
 
     {"type": "bullets", "title": "When Accuracy Lies", "bullets": [
         "Accuracy = fraction correct — fine only if classes are balanced",

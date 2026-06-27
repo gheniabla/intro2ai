@@ -257,6 +257,12 @@ eval_nb = [
     ("md", "## ▶ What you'll see when you run this\n"
            "- Two RAG configs scored on the **RAG triad** (Context Relevance, Groundedness, "
            "Answer Relevance) and a printed **scorecard** showing which chunking wins.\n\n"
+           "> **⚠️ Offline-eval honesty:** with **no API key** this notebook uses a **heuristic "
+           "judge** *and* a **join-based generator** (it stitches the retrieved chunks together "
+           "instead of calling an LLM). That answer is grounded *by construction*, so offline "
+           "**Groundedness scores are inflated and the triad looks flat** — the numbers are for "
+           "wiring practice, not real quality. **Add `GEMINI_API_KEY` or `ANTHROPIC_API_KEY` for "
+           "real numbers.**\n\n"
            "**Time:** ~12 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku) "
            "· **Keys:** none needed (heuristic fallback) — GEMINI_API_KEY or ANTHROPIC_API_KEY "
            "make the judge real"),
@@ -473,4 +479,140 @@ eval_nb = [
 ]
 build_notebook(eval_nb, os.path.join(CODE, "03_rag_evaluation.ipynb"))
 
-print("wrote Week 11 notebooks (01, 02, 03) to", CODE)
+# ---------------------------------------------------------------- notebook 4
+# Modern RAG (2026): hybrid retrieval (dense + BM25, fused) + cross-encoder
+# reranking. Retrieval-only, no API key. Every external package import is
+# guarded so the notebook degrades gracefully if something is missing.
+hybrid_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- The **same query** ranked three ways — **dense** (embeddings), **BM25** "
+           "(keyword), and a **fused hybrid** list — then a **cross-encoder reranker** "
+           "reordering the top candidates, so you can watch each upgrade change the order.\n\n"
+           "**Time:** ~8 min · **Cost:** free (all local Hugging Face models, retrieval-only) "
+           "· **Keys:** none required. *Every extra package is import-guarded — if one is "
+           "missing, that step is skipped with a note instead of crashing.*"),
+
+    ("md", "# Week 11 · Notebook 4 — Modern RAG: Hybrid Retrieval + Reranking\n"
+           "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
+           "Plain vector search is the **starting point**. Here we add two of the 2026 "
+           "upgrades from the lecture, kept deliberately small:\n"
+           "1. **Hybrid search** — combine **dense** (sentence-transformers) similarity with "
+           "**BM25** keyword scores and **fuse** them, so we catch both paraphrases *and* exact "
+           "terms.\n"
+           "2. **Reranking** — let a **cross-encoder** read each *(question, chunk)* pair "
+           "together and reorder the shortlist.\n\n"
+           "> No OpenAI, no API key: embeddings + reranker are local Hugging Face models. "
+           "Imports are guarded so missing packages degrade gracefully."),
+
+    ("md", "## 0. Install (all local, no keys)"),
+    ("code", "!pip -q install sentence-transformers rank-bm25"),
+
+    ("md", "## 1. A tiny corpus\n"
+           "Same course handbook, pre-split into short passages so we can see the ranking move. "
+           "Notice the exact tokens (`CSCI250`, `48-hour`) — those are where keyword search earns "
+           "its keep."),
+    ("code", "CHUNKS = [\n"
+             "    'Modules open Monday and the weekly lab is due Sunday at 11:59 PM Pacific.',\n"
+             "    'You may miss deadlines twice using the two automatic 48-hour extensions.',\n"
+             "    'Students may use AI assistants such as Claude and Gemini, but must disclose it.',\n"
+             "    'Exams, including the midterm and final, are AI-restricted.',\n"
+             "    'Labs are 50 percent, the midterm 20 percent, the final project 30 percent.',\n"
+             "    'The final project is due December 19.',\n"
+             "    'Office hours: Tuesday 5-6 PM and Saturday 10-11 AM Pacific on Zoom.',\n"
+             "    'Email the instructor with the subject prefix CSCI250 for a 48-hour reply.',\n"
+             "]\n"
+             "QUERY = 'How long are the automatic extensions and how do I email the instructor?'\n"
+             "print(len(CHUNKS), 'chunks; query =', QUERY)"),
+
+    ("md", "## 2. Dense retrieval (embeddings)\n"
+           "Embed the query and every chunk with a local sentence-transformers model and rank by "
+           "cosine similarity. Great at paraphrases; can blur exact tokens."),
+    ("code", "import numpy as np\n\n"
+             "dense_scores = None\n"
+             "try:\n"
+             "    from sentence_transformers import SentenceTransformer\n"
+             "    embedder = SentenceTransformer('all-MiniLM-L6-v2')\n"
+             "    emb = embedder.encode([QUERY] + CHUNKS, normalize_embeddings=True)\n"
+             "    qv, cv = emb[0], emb[1:]\n"
+             "    dense_scores = cv @ qv   # cosine sim (vectors are normalized)\n"
+             "    order = np.argsort(-dense_scores)\n"
+             "    print('DENSE ranking:')\n"
+             "    for r in order:\n"
+             "        print(f'  {dense_scores[r]:.3f} | {CHUNKS[r]}')\n"
+             "except Exception as e:\n"
+             "    print('[sentence-transformers unavailable, skipping dense:', e, ']')"),
+
+    ("md", "## 3. BM25 keyword retrieval\n"
+           "BM25 is classic bag-of-words keyword scoring. It nails exact terms (`48-hour`, "
+           "`CSCI250`) that dense embeddings smear together."),
+    ("code", "bm25_scores = None\n"
+             "try:\n"
+             "    from rank_bm25 import BM25Okapi\n"
+             "    tokenized = [c.lower().split() for c in CHUNKS]\n"
+             "    bm25 = BM25Okapi(tokenized)\n"
+             "    bm25_scores = np.array(bm25.get_scores(QUERY.lower().split()))\n"
+             "    order = np.argsort(-bm25_scores)\n"
+             "    print('BM25 ranking:')\n"
+             "    for r in order:\n"
+             "        print(f'  {bm25_scores[r]:.3f} | {CHUNKS[r]}')\n"
+             "except Exception as e:\n"
+             "    print('[rank-bm25 unavailable, skipping BM25:', e, ']')"),
+
+    ("md", "## 4. Fuse them → hybrid\n"
+           "Two rankers, two score scales — so we **min-max normalize** each to 0–1 and average. "
+           "(In production a common alternative is *Reciprocal Rank Fusion*, which fuses by rank "
+           "position instead of score.) If only one ranker ran, we fall back to it."),
+    ("code", "def _norm(x):\n"
+             "    x = np.asarray(x, dtype=float)\n"
+             "    lo, hi = x.min(), x.max()\n"
+             "    return (x - lo) / (hi - lo) if hi > lo else np.zeros_like(x)\n\n"
+             "parts = [s for s in (dense_scores, bm25_scores) if s is not None]\n"
+             "if not parts:\n"
+             "    raise SystemExit('Neither retriever ran — install the packages above.')\n"
+             "hybrid = np.mean([_norm(p) for p in parts], axis=0)\n"
+             "hyb_order = list(np.argsort(-hybrid))\n"
+             "print(f'HYBRID ranking (fused {len(parts)} retriever(s)):')\n"
+             "for r in hyb_order:\n"
+             "    print(f'  {hybrid[r]:.3f} | {CHUNKS[r]}')\n\n"
+             "TOP_N = 4\n"
+             "shortlist = hyb_order[:TOP_N]\n"
+             "print('\\nShortlist for reranking:', shortlist)"),
+
+    ("md", "## 5. Rerank the shortlist with a cross-encoder\n"
+           "Bi-encoders (steps 2–4) embed the query and chunk **separately**. A **cross-encoder** "
+           "reads the *(query, chunk)* pair **together**, so it scores relevance much more "
+           "accurately — but it runs once per candidate, which is why we only rerank the "
+           "shortlist, not the whole corpus. Guarded so a missing package just keeps the hybrid "
+           "order."),
+    ("code", "try:\n"
+             "    from sentence_transformers import CrossEncoder\n"
+             "    reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')\n"
+             "    pairs = [(QUERY, CHUNKS[i]) for i in shortlist]\n"
+             "    ce_scores = reranker.predict(pairs)\n"
+             "    reranked = [i for _, i in sorted(zip(ce_scores, shortlist),\n"
+             "                                     key=lambda t: -t[0])]\n"
+             "    print('RERANKED top results (cross-encoder):')\n"
+             "    for s, i in sorted(zip(ce_scores, shortlist), key=lambda t: -t[0]):\n"
+             "        print(f'  {s:+.2f} | {CHUNKS[i]}')\n"
+             "    final = reranked\n"
+             "except Exception as e:\n"
+             "    print('[cross-encoder unavailable, keeping hybrid order:', e, ']')\n"
+             "    final = shortlist\n\n"
+             "print('\\nFinal context order to feed the LLM:', final)"),
+
+    ("md", "## 6. Takeaways\n"
+           "- **Hybrid** (dense + BM25) catches both paraphrases and exact tokens — fuse the two "
+           "ranked lists.\n"
+           "- **Reranking** with a cross-encoder reorders the shortlist far more accurately than "
+           "first-pass similarity; only rerank the top-k (it's slower per item).\n"
+           "- These are **additive upgrades** to Notebook 1's pipeline — add them only when the "
+           "**RAG triad** (Notebook 3) says plain vector search is the bottleneck.\n"
+           "- Still 2026 baseline you didn't run here: **Contextual Retrieval** (prepend a context "
+           "blurb to each chunk before embedding) and **agentic RAG** (the model decides "
+           "when/what to retrieve) — see the lecture notes.\n\n"
+           "> **Responsible AI:** even with hybrid + reranking, RAG can still hallucinate — always "
+           "cite sources, and remember retrieval **amplifies bias in your corpus**."),
+]
+build_notebook(hybrid_nb, os.path.join(CODE, "04_hybrid_rerank.ipynb"))
+
+print("wrote Week 11 notebooks (01, 02, 03, 04) to", CODE)

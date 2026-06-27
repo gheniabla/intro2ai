@@ -106,7 +106,11 @@ eval_harness = [
     ("md", "## 4. Scorer B — LLM-as-judge (Claude)\n"
            "A strong model grades against a rubric. We ask for a single number and keep "
            "temperature low. **Judge hygiene:** clear rubric, structured output, spot-check "
-           "against your own judgment, and remember judges can favor longer/own-style answers."),
+           "against your own judgment, and counter the three documented **judge biases**: "
+           "**position bias** (favoring whichever answer is shown first — swap order and "
+           "average), **verbosity bias** (over-rewarding longer answers — score conciseness), "
+           "and **self-preference bias** (rating its own model family higher — use a "
+           "cross-family judge, which we do in §6)."),
     ("code", "def judge_score(answer: str, expected: str, question: str = '') -> float:\n"
              "    prompt = (\n"
              "        'You are a strict grader. Score the model answer for correctness.\\n'\n"
@@ -162,7 +166,7 @@ eval_harness = [
     ("md", "## 6. Run TWO LLM judges and compare (watch for self-preference bias)\n"
            "Re-run with **both** judges — Claude (`claude-sonnet-4-6`) and Gemini "
            "(`gemini-2.5-flash`) — on the same answers and compare their averages. The system "
-           "under test is `claude-haiku-4-5`, so the Claude judge is **same-family**: LLM judges "
+           "under test is `claude-haiku-4-5-20251001`, so the Claude judge is **same-family**: LLM judges "
            "show a measurable **self-preference bias**, tending to rate answers from their own "
            "model family more favorably, so a **cross-family** judge (here, Gemini) or human "
            "spot-checks are a useful sanity check. Both judges are wired up (no dead code)."),
@@ -189,8 +193,9 @@ eval_harness = [
            "- Swap `system_under_test` for **your** pipeline.\n"
            "- Add 5-10 test cases that matter for your problem.\n"
            "- Report the average score in your write-up.\n"
-           "- Pair this with the **safety checklist** (hallucination, bias, prompt injection, "
-           "privacy) from this week's document."),
+           "- Pair this with the **safety + Responsible AI checklist** (hallucination, bias & "
+           "fairness, prompt injection, privacy/PII, transparency/disclosure, societal impact) "
+           "from this week's document."),
 ]
 build_notebook(eval_harness, os.path.join(CODE, "01_eval_harness.ipynb"))
 

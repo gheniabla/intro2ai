@@ -18,6 +18,15 @@ By the end of this week you will be able to:
 
 This week begins the **LLM block** of the course. Everything from here — prompt engineering (Week 9), RAG (Week 11), agents (Week 13) — builds on the mental model you form now.
 
+> ### 🧭 How to approach this week (read first)
+> This is **the most challenging week of the course**, and it lands right after the midterm — that is expected, so pace yourself.
+> - The two from-scratch labs (**BPE tokenizer**, **attention in NumPy**) are **concepts-first**. The goal is to *understand* how a token and an attention weight come to be — **we stop at understanding.** You are **not** building a full Transformer and **not** training a real LLM. Every fill-in already ships with a working reference answer right below it.
+> - **If you are short on time, prioritize running and understanding over the optional fill-ins.** Run each cell, read the output, and make sure the *idea* lands (what a merge does, what a softmax row means). You can always come back to the blanks.
+> - The capstone "Start My Assistant" step this week is **deliberately tiny** — you only **pick your idea and track**. The graded proposal + prototype (Milestone M1) is not due until **Week 9**.
+> - Order of attack: notebooks **1 → 2** (LLM behavior, the core ideas) first; then **3** (BPE) and **4** (attention) for the under-the-hood picture. The two from-scratch notebooks are independent — do them in either order.
+
+> **🎯 Start My Assistant (Week 8 — pick only):** This is where your **final project begins**, but the *only* thing to do this week is **choose your idea and your track** (RAG / Tool-Using Agent / Multimodal / Fine-Tuned — see `Final-Project-Capstone.md`). **Don't build the app yet.** The graded proposal + a "wow in 5 min" prototype is **Milestone M1, due Week 9** (`capstone/M1.md`). Jot a one-line idea now; that's enough.
+
 ---
 
 ## 1. What is a Large Language Model?
@@ -158,6 +167,8 @@ To **encode**, you replay the learned merges; to **decode**, each token id maps 
 
 The notebook (`code/03_build_bpe_tokenizer.ipynb`) has you fill in `merge`, `encode`, and `decode` with `assert` self-checks, run a round-trip on **your own text**, then compare against a **real Hugging Face** BPE tokenizer.
 
+> **Scope cap (honest bound):** our `encode` applies the learned merges once in order, which is plenty to *see the idea*; production BPE re-scans the sequence and keeps applying the highest-priority merge until **no merge rule applies anymore**. Same algorithm, just run to completion — out of scope here.
+
 ---
 
 ## 9. Attention: the idea behind Transformers
@@ -178,6 +189,8 @@ output  = weights @ V                    # context-aware mix of value vectors
 Plotting `weights` as a **heatmap** shows exactly which words attend to which — the same picture researchers use to interpret models. **Multi-head** attention simply runs this several times in parallel, each head with its own Q/K/V, so different heads can capture different relationships (grammar, long-range references). Stack many such layers and you have a Transformer.
 
 The notebook (`code/04_attention_from_scratch.ipynb`) has you fill in the scores, softmax, and weighted-sum steps with `assert` checks, draw the attention heatmap, and run it on **your own** toy sentence.
+
+> **Scope cap (honest bound):** this is an **encoder-style** demo where every word can attend to every other word. Real **decoder-only** LLMs (the ones that generate text) add a **causal mask** so a token can only attend to tokens *before* it — one extra step we leave out to keep the core idea clear.
 
 ---
 

@@ -84,6 +84,7 @@ By the end of the semester, you will be able to do the following:
 - Design and implement simple ML and Generative-AI projects
 - Know the common state-of-the-art Generative AI tools & APIs
 - **Use AI-assisted coding tools (e.g., Claude Code) responsibly and effectively to build and test software**
+- **Reason about responsible AI — bias and fairness, privacy, transparency, and societal impact — as a recurring theme woven through the course (not a single topic)**
 
 ## Student Learning Outcomes:
 **Theory** – Students will be able to discuss basic Artificial Intelligence principles; understand when it is applicable and what its limitations are.

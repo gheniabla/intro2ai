@@ -16,6 +16,13 @@ slides = [
         "From scratch: build a BPE tokenizer + attention in NumPy",
         "Hands-on: Claude + Gemini + a local model"]},
 
+    {"type": "bullets", "title": "🧭 How to Approach This Week", "bullets": [
+        "The hardest week — and it's right after the midterm. Pace yourself.",
+        "From-scratch labs (BPE, attention) are CONCEPTS-FIRST — we stop at understanding",
+        "No full Transformer, no training a real LLM; every fill-in ships a working answer",
+        "Short on time? Prioritize running + understanding over the optional fill-ins",
+        ("Capstone this week = PICK your idea/track only; graded M1 is due Week 9", 1)]},
+
     {"type": "section", "title": "How LLMs Work"},
     {"type": "bullets", "title": "Next-Token Prediction", "bullets": [
         "An LLM is a large Transformer neural network (builds on Week 6)",
@@ -80,7 +87,7 @@ slides = [
              "    return out\n\n"
              "# loop: count pairs -> merge most frequent -> repeat\n"
              "# then encode/decode round-trips your own text exactly",
-     "caption": "code/03_build_bpe_tokenizer.ipynb — Karpathy minbpe / CS336 style, pure Python."},
+     "caption": "code/03 — Karpathy minbpe / CS336 style, pure Python. Scope cap: production BPE re-scans until no merge applies."},
 
     {"type": "section", "title": "The Idea Behind Transformers: Attention"},
     {"type": "bullets", "title": "Scaled Dot-Product Attention", "bullets": [
@@ -95,7 +102,7 @@ slides = [
              "weights = softmax_rows(scores)     # rows sum to 1\n"
              "output  = weights @ V              # context mix\n\n"
              "# plot 'weights' as a heatmap -> the engine, made visible",
-     "caption": "code/04_attention_from_scratch.ipynb — the operation inside every LLM, in pure NumPy."},
+     "caption": "code/04 — the operation inside every LLM, pure NumPy. Scope cap: encoder-style; real decoder LLMs add a causal mask."},
 
     {"type": "two_col", "title": "Three Ways to Run a Model",
      "left_title": "Cloud APIs (need a key)",
@@ -103,12 +110,18 @@ slides = [
      "right_title": "Local (no key, no cost)",
      "right": ["Ollama (Llama, Mistral, Gemma)", "Hugging Face transformers"]},
 
+    {"type": "bullets", "title": "🎯 Start My Assistant — Just Pick", "bullets": [
+        "Your final project begins this week — but ONLY pick your idea + track",
+        "Tracks: RAG · Tool-Using Agent · Multimodal · Fine-Tuned (see Capstone doc)",
+        "Don't build the app this week — jot a one-line idea, that's enough",
+        ("Graded proposal + 'wow in 5 min' prototype = Milestone M1, due Week 9", 1)]},
+
     {"type": "closing", "title": "This Week — To Do", "bullets": [
         "Read the Compact Guide to LLMs (tokens, context, sampling)",
         "Run 01_llm_concepts.ipynb + 02_claude_gemini_local.ipynb",
-        "Build the BPE tokenizer (03) — fill-ins + round-trip on your text",
-        "Build attention (04) — fill-ins + paste your heatmap",
+        "Build the BPE tokenizer (03) + attention (04) — concepts-first; running > fill-ins if short on time",
         "Do the hallucination hunt + comparison table",
+        "Pick your capstone idea + track (building starts Week 9)",
         "Submit Assignment A7 by Sunday 11:59 PM PT"]},
 ]
 

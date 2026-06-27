@@ -114,6 +114,18 @@ agents = [
              "    print('CLAUDE AGENT:'); print(run_claude_agent(Q))\n"
              "else:\n"
              "    print('FALLBACK AGENT (no key):'); print(run_fallback_agent(Q))"),
+    ("md", "## 4b. The `max_turns` guard, fired on purpose\n"
+           "The loop is bounded so a confused or hijacked agent can't spin forever. Here "
+           "we set `max_turns=2` but feed an agent that *always* asks for another tool — "
+           "it hits the cap and returns the **stop** message instead of looping."),
+    ("code", "def looping_agent(user_msg, max_turns=5):\n"
+             "    \"\"\"A pathological 'model' that NEVER stops asking for a tool.\"\"\"\n"
+             "    for turn in range(max_turns):                 # REASON\n"
+             "        print(f'  turn {turn}: model asks for add(1, 1)')\n"
+             "        TOOLS['add'](1, 1)                         # ACT/OBSERVE (never satisfied)\n"
+             "    return 'stopped: hit max turns'               # loop guard fires\n\n"
+             "print(looping_agent('loop forever please', max_turns=2))"),
+
     ("md", "## 5. Gemini: automatic function calling\n"
            "Gemini reads type hints + docstrings and calls plain Python functions for "
            "you — the loop is hidden inside the SDK."),
@@ -229,6 +241,10 @@ Run:
          -d '{"message": "What is 12 + 30, and the price of coffee?"}'
 
 NEVER hard-code your API key here — it is read from the environment.
+
+Guardrails (matching Week 13 Notebook 3): an ALLOWED_TOOLS allow-list (least
+privilege) and a simple prompt-injection pattern check on tool output. The
+deployable artifact enforces the same defenses the week teaches.
 """
 import os
 import re
@@ -244,6 +260,31 @@ def get_price(item):
     return {"coffee": 4, "tea": 3, "cocoa": 5}.get(str(item).lower(), 0)
 
 TOOLS = {"add": add, "get_price": get_price}
+
+# --------------------------------------------------------------- guardrails
+# Least privilege: the agent may ONLY call tools named here. A tool the model
+# requests that is not in this set is refused, no matter what any text says.
+ALLOWED_TOOLS = {"add", "get_price"}
+
+INJECTION_PATTERNS = [
+    "ignore all previous", "ignore previous instructions",
+    "disregard the above", "system prompt", "reply only",
+]
+
+def looks_injected(text):
+    """Return the injection patterns found in (untrusted) tool output, if any."""
+    t = (text or "").lower()
+    return [p for p in INJECTION_PATTERNS if p in t]
+
+def run_tool(name, **kwargs):
+    """Run a tool through the allow-list + scan its output for injection.
+    Tool output is treated as DATA, never as instructions."""
+    if name not in ALLOWED_TOOLS:
+        return f"[blocked] tool {name!r} not in ALLOWED_TOOLS"
+    out = TOOLS[name](**kwargs)
+    if looks_injected(str(out)):
+        return f"[flagged: possible injection in tool output] {out}"
+    return out
 
 TOOL_SCHEMAS = [
     {"name": "add", "description": "Add two numbers.",
@@ -271,7 +312,7 @@ def run_claude_agent(user_msg, max_turns=5):
         results = []
         for b in resp.content:
             if b.type == "tool_use":
-                out = TOOLS[b.name](**b.input)        # ACT
+                out = run_tool(b.name, **b.input)     # ACT (allow-list + injection scan)
                 results.append({"type": "tool_result",
                                 "tool_use_id": b.id, "content": str(out)})  # OBSERVE
         messages.append({"role": "user", "content": results})
@@ -289,7 +330,7 @@ def run_fallback_agent(user_msg, max_turns=5):
             calls.append(("get_price", {"item": item}))
     obs = []
     for name, args in calls[:max_turns]:
-        obs.append(f"{name}={TOOLS[name](**args)}")
+        obs.append(f"{name}={run_tool(name, **args)}")   # allow-list + injection scan
     return "(fallback) " + (", ".join(obs) if obs else "no tool matched")
 
 
@@ -502,5 +543,133 @@ safety = [
     ("code", "# your safety + eval experiments here\n"),
 ]
 build_notebook(safety, os.path.join(CODE, "03_agent_safety_and_eval.ipynb"))
+
+# ============================================================ NOTEBOOK 4
+mcp = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A **minimal MCP server** defined in code — exposing **one tool** "
+           "(`get_price`) and **one resource** (`menu://today`) — and an **in-process "
+           "client** that lists them and calls the tool, printing "
+           "*`get_price(coffee) -> 4`*. No external server, no network.\n\n"
+           "**Time:** ~10 min · **Cost:** free (runs fully offline) · **Keys:** none "
+           "required — uses the `mcp` Python SDK if installed, else a faithful no-deps "
+           "stand-in that shows the SAME server structure."),
+
+    ("md", "# Week 13 · Notebook 4 — Build a Minimal MCP Server\n"
+           "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
+           "MCP is the headline of this week and an A10 deliverable — so let's **see it in "
+           "code**, not just prose. We build a tiny **MCP server** that exposes:\n"
+           "- **one tool** — `get_price(item)` (a function a client/Claude can call),\n"
+           "- **one resource** — `menu://today` (read-only data a client can fetch),\n\n"
+           "then connect a **client** to list and use them. This is the same shape as the "
+           "GitHub / filesystem / Postgres servers you add to Claude Code with "
+           "`claude mcp add ...`."),
+
+    ("md", "## 0. Install the official MCP SDK (graceful fallback)\n"
+           "We try the official `mcp` Python SDK. If it isn't installed or can't run here "
+           "(e.g. Colab's event loop), we fall back to a **no-dependency stand-in** that "
+           "mirrors the SAME server structure — so you always see how MCP is wired."),
+    ("code", "!pip -q install mcp 2>/dev/null || echo 'mcp not installed — using the stand-in below'"),
+    ("code", "try:\n"
+             "    import mcp  # noqa: F401\n"
+             "    from mcp.server.fastmcp import FastMCP\n"
+             "    HAVE_MCP = True\n"
+             "    print('official mcp SDK available:', mcp.__version__ if hasattr(mcp,'__version__') else 'ok')\n"
+             "except Exception as e:\n"
+             "    HAVE_MCP = False\n"
+             "    print('mcp SDK not usable here -> using the stand-in. reason:', e)"),
+
+    ("md", "## 1. Define the server with the official SDK\n"
+           "`FastMCP` turns decorated Python functions into MCP **tools** and "
+           "**resources**. This is the *real* server you'd run as a process and register "
+           "with `claude mcp add`. We define it whether or not the SDK is importable so "
+           "you can read the structure either way."),
+    ("code", "MENU = {'coffee': 4, 'tea': 3, 'cocoa': 5}\n\n"
+             "if HAVE_MCP:\n"
+             "    server = FastMCP('cafe')          # an MCP server named 'cafe'\n\n"
+             "    @server.tool()\n"
+             "    def get_price(item: str) -> int:\n"
+             "        \"\"\"Look up a menu price in dollars.\"\"\"   # tool: a callable action\n"
+             "        return MENU.get(item.lower(), 0)\n\n"
+             "    @server.resource('menu://today')\n"
+             "    def menu_today() -> str:\n"
+             "        \"\"\"Today's menu as readable text.\"\"\"      # resource: data to READ\n"
+             "        return '\\n'.join(f'{k}: ${v}' for k, v in MENU.items())\n\n"
+             "    print('defined FastMCP server `cafe` with 1 tool + 1 resource')\n"
+             "    print('To run it as a real process:  server.run()  (stdio transport)')\n"
+             "else:\n"
+             "    print('SDK not importable here — see the annotated stand-in in section 2.')"),
+
+    ("md", "## 2. A no-deps stand-in (SAME structure) + an in-process client\n"
+           "Identical shape — a registry of **tools** and **resources**, plus a tiny "
+           "**client** that does what a real MCP client (Claude Code, the desktop app, "
+           "your agent) does: **list** capabilities, then **call** a tool / **read** a "
+           "resource over the protocol. This always runs."),
+    ("code", "class MiniMCPServer:\n"
+             "    \"\"\"A faithful (toy) MCP server: tools = callable actions, resources = readable data.\"\"\"\n"
+             "    def __init__(self, name):\n"
+             "        self.name = name; self._tools = {}; self._resources = {}\n"
+             "    def tool(self, fn):\n"
+             "        self._tools[fn.__name__] = fn; return fn\n"
+             "    def resource(self, uri):\n"
+             "        def deco(fn): self._resources[uri] = fn; return fn\n"
+             "        return deco\n"
+             "    # ---- the 'protocol' surface a client talks to ----\n"
+             "    def list_tools(self):     return list(self._tools)\n"
+             "    def list_resources(self): return list(self._resources)\n"
+             "    def call_tool(self, name, **kwargs): return self._tools[name](**kwargs)\n"
+             "    def read_resource(self, uri):        return self._resources[uri]()\n\n"
+             "cafe = MiniMCPServer('cafe')\n\n"
+             "@cafe.tool\n"
+             "def get_price(item: str) -> int:\n"
+             "    \"\"\"Look up a menu price in dollars.\"\"\"     # TOOL\n"
+             "    return MENU.get(item.lower(), 0)\n\n"
+             "@cafe.resource('menu://today')\n"
+             "def menu_today() -> str:\n"
+             "    \"\"\"Today's menu as text.\"\"\"                 # RESOURCE\n"
+             "    return '\\n'.join(f'{k}: ${v}' for k, v in MENU.items())\n\n"
+             "print('server:', cafe.name)"),
+    ("code", "# A client connects and uses the server over the (toy) protocol:\n"
+             "print('client -> list_tools     :', cafe.list_tools())\n"
+             "print('client -> list_resources :', cafe.list_resources())\n"
+             "print('client -> call get_price :', f\"get_price(coffee) -> {cafe.call_tool('get_price', item='coffee')}\")\n"
+             "print('client -> read resource  :')\n"
+             "print(cafe.read_resource('menu://today'))"),
+
+    ("md", "## 3. How Claude / Claude Code connects to a real server\n"
+           "You don't usually call the server by hand — an **MCP client inside an AI app** "
+           "does. With the real SDK you'd run the server as a process and register it:\n\n"
+           "```bash\n"
+           "# 1) run the server (stdio):   python cafe_server.py   # calls server.run()\n"
+           "# 2) register it with Claude Code:\n"
+           "claude mcp add cafe -- python /path/to/cafe_server.py\n"
+           "```\n"
+           "Now `get_price` shows up as a tool Claude can call and `menu://today` as a "
+           "resource it can read — **no custom glue**. Write the server **once**; any "
+           "MCP-aware client reuses it."),
+    ("md", "## 4. Security note — connecting MCP servers is an attack surface\n"
+           "An MCP server is **external code feeding your agent data and actions**, so the "
+           "Week 13 guardrails apply directly:\n"
+           "- **Prompt injection via tool/resource results:** a server can return text that "
+           "says *\"ignore previous instructions…\"*. Treat MCP results as **untrusted "
+           "data**, not commands (scan them — see Notebook 3 / `agent_app.py`).\n"
+           "- **Over-broad permissions:** only connect servers you trust, and grant the "
+           "**least privilege** needed — an `ALLOWED_TOOLS` allow-list still applies even "
+           "when the tool arrives via MCP.\n"
+           "- **Human-in-the-loop** for consequential server tools (writes, payments)."),
+    ("md", "### Takeaways\n"
+           "- An **MCP server** exposes **tools** (actions) + **resources** (data) "
+           "[+ prompts]; an **MCP client** (in an AI app) lists and uses them.\n"
+           "- Write a tool **once** as a server; every MCP-aware client reuses it — "
+           "*USB-C for AI tools*.\n"
+           "- MCP servers are an **attack surface**: untrusted results + least privilege "
+           "+ human-in-the-loop.\n\n"
+           "### Try it\n"
+           "1. Add a second tool to `cafe` (e.g. `is_open(hour)`); list + call it.\n"
+           "2. Add a `prompt` capability (a reusable template) — MCP's third primitive.\n"
+           "3. In one sentence: why does MCP beat hand-writing tool glue per app?"),
+    ("code", "# your MCP experiments here\n"),
+]
+build_notebook(mcp, os.path.join(CODE, "04_mcp_intro.ipynb"))
 
 print("wrote Week 13 notebooks + agent_app.py to", CODE)

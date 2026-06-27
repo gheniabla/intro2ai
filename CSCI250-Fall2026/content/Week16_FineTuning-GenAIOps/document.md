@@ -78,6 +78,16 @@ lora = LoraConfig(
 ```
 **QLoRA** goes further: load the frozen base model in **4-bit** (quantized) and train LoRA adapters on top — this is how people fine-tune billion-parameter models on a single consumer/Colab GPU.
 
+### 3.1 The post-training ladder (vocabulary you'll hear)
+LoRA above is *how* you cheaply update weights; the modern question is *what you train on*. Today's chat and reasoning models are built in stages on top of the raw pretrained model — the **post-training ladder**:
+
+1. **Pretraining** — learn language from a huge text corpus (next-token prediction). Expensive; done once by the model maker.
+2. **SFT (supervised fine-tuning)** — teach the model to *follow instructions* on curated input→output pairs (this is the LoRA lab's flavor).
+3. **Preference optimization** — teach it which of two answers humans *prefer*. **DPO** (Direct Preference Optimization) is the workhorse here: train directly on pairs of (chosen, rejected) responses, no separate reward model needed — simpler and cheaper than classic RLHF.
+4. **RL (reinforcement learning)** — optimize against a reward signal. **PPO** is the classic RLHF algorithm; **GRPO** (Group Relative Policy Optimization) is the RL method behind recent **reasoning models**, and **RLVR** (RL from Verifiable Rewards) trains on tasks where an answer can be *automatically checked* (math, code), letting the model practice long chains of reasoning.
+
+You won't run DPO or GRPO this week — they need real reward data and compute. The point is **vocabulary**: when you read that a model was "DPO-tuned" or "trained with GRPO/RLVR for reasoning," you now know where on the ladder that sits and why it differs from plain SFT.
+
 ---
 
 ## 4. GPUs for LLMs: memory and quantization
@@ -176,6 +186,6 @@ You'll wire input + output guardrails (plus the cost report from §5.2) into you
 ---
 
 ## Key terms
-**fine-tuning**, **epoch**, **learning rate**, **overfitting**, **PEFT**, **LoRA**, **QLoRA**, **adapter**, **quantization**, **VRAM**, **GenAI Ops / LLMOps**, **latency**, **token cost**, **monitoring**.
+**fine-tuning**, **epoch**, **learning rate**, **overfitting**, **PEFT**, **LoRA**, **QLoRA**, **adapter**, **quantization**, **VRAM**, **GenAI Ops / LLMOps**, **latency**, **token cost**, **monitoring**, **post-training**, **SFT**, **preference optimization**, **DPO**, **RLHF**, **PPO**, **GRPO**, **RLVR**.
 </content>
 </invoke>

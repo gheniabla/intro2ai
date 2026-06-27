@@ -41,6 +41,11 @@ r2   = r2_score(y_test, preds)
 ```
 *Rule of thumb:* RMSE ≥ MAE always; a big gap means a few large errors are dominating.
 
+### 1.3 Reading the coefficients (`reg.coef_`)
+A fitted linear model exposes one weight per feature in `reg.coef_` (plus `reg.intercept_`). **A coefficient is the change in the predicted target for a one-unit increase in that feature, holding the others fixed.** Read it on two axes:
+- **Sign** — positive means the target rises as the feature rises; negative means it falls. (On the **diabetes** dataset the target is disease progression, so a positive weight = that measurement pushes progression *up*.)
+- **Magnitude** — the larger the absolute value, the stronger that feature's pull on the prediction. The feature with the **largest `|coef|`** is the most influential *for this model*. Because the diabetes features are already normalized to a common scale, their coefficients are directly comparable; on raw, differently-scaled features you would scale first (Section 2.2) before comparing magnitudes. And remember: this is **association, not proof of causation** — a big weight does not mean the feature *causes* the outcome.
+
 ---
 
 ## 2. Classification: predicting a category
@@ -57,6 +62,16 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 ```
+
+### 2.2 Why k-NN needs feature scaling
+k-NN labels a point by its **closest neighbors**, and "closest" is a **distance**. If one feature ranges 0–1 and another ranges 0–100,000, the big-range feature dominates the distance and the small one is effectively ignored — even if it is the more useful signal. The fix is **standardization**: `StandardScaler` rescales each feature to mean 0, standard deviation 1, so every feature contributes fairly.
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+# scale, THEN k-NN — a Pipeline learns the scaler on train only (no leakage)
+knn_scaled = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5))
+```
+You will see this directly in `02_classification.ipynb`: the **same** k-NN scores noticeably higher *with* scaling than *without*. Distance- and gradient-based models (k-NN, SVMs, neural nets) care about scale; **tree-based models do not** (they split one feature at a time), which is a handy thing to remember.
 
 ---
 

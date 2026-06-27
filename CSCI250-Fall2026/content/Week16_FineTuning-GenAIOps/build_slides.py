@@ -49,6 +49,12 @@ slides = [
              "    task_type=\"CAUSAL_LM\",\n"
              ")",
      "caption": "Full runnable demo in 01_lora_finetune_demo.ipynb"},
+    {"type": "bullets", "title": "The Post-Training Ladder (vocabulary)", "bullets": [
+        "Pretraining → SFT → preference optimization → RL",
+        "SFT: follow instructions on input→output pairs (the LoRA lab)",
+        "DPO: train on (chosen, rejected) pairs — the preference workhorse",
+        "RL: PPO (classic RLHF); GRPO + RLVR power reasoning models",
+        ("'DPO-tuned' / 'GRPO for reasoning' — now you know where it sits", 1)]},
 
     {"type": "section", "title": "GPUs & Quantization"},
     {"type": "bullets", "title": "Memory Is the Limit", "bullets": [

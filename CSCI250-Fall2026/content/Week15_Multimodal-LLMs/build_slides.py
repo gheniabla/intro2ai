@@ -86,6 +86,13 @@ slides = [
         "gemini-2.5-pro for hard images · local LLaVA when data must stay put",
         ("Keys from Colab Secrets / env vars — never hard-code", 1)]},
 
+    {"type": "bullets", "title": "Provenance & Watermarking — Label AI Media", "bullets": [
+        "How do you tell AI media from a real photo? → provenance",
+        "Watermarking: invisible signal in the pixels — SynthID (Google)",
+        "Content Credentials / C2PA: signed, tamper-evident metadata 'label'",
+        "Why: deepfakes, misinformation — EU AI Act requires disclosure",
+        ("Prefer provenance-aware tools; disclose AI media you ship", 1)]},
+
     {"type": "closing", "title": "This Week — To Do", "bullets": [
         "Read: Claude Vision + Gemini multimodal docs",
         "Run 01_multimodal_basics.ipynb — Claude vs Gemini",

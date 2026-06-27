@@ -14,6 +14,8 @@ By the end of this week you will be able to:
 6. Force **structured / JSON output** you can parse in code.
 7. **Iteratively refine** a prompt and evaluate the change.
 8. Apply each pattern with **both Claude and Gemini** and note the API differences.
+9. Explain **test-time compute** — letting a model "think longer" via **extended thinking / reasoning models** — and judge when the extra cost is worth it.
+10. Describe how prompt engineering is growing into **context engineering** (compaction, just-in-time retrieval, the "lost in the middle" effect).
 
 > **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + Capstone Milestone M1). There is **no separate weekly assignment** this week — the prompt-engineering exercises are **ungraded practice**, and your graded deliverable is **Capstone Milestone M1** (see `capstone/M1.md`).
 
@@ -107,6 +109,42 @@ See `code/03_reasoning_and_cot.ipynb` — naive-vs-CoT, zero- vs few-shot CoT, a
 
 ---
 
+## 4.5 Reasoning models & test-time compute *(2026)*
+CoT is *you* asking the model to think. The newer idea is to let the model **spend more compute at inference time** — to "think longer" before it answers. This is called **test-time compute** (or inference-time compute), and it is the big shift of 2024–2026.
+
+- **Extended thinking / thinking budgets.** Modern APIs let you turn on a hidden "scratchpad" and even set a **budget** for how many tokens the model may spend reasoning before it replies. **Claude** exposes *extended thinking*; **Gemini 2.5** has a *thinking* mode. More budget → more careful reasoning on hard problems, but more tokens (cost + latency).
+- **Reasoning models.** Some models are *trained* to reason at length by default. **DeepSeek-R1** is a leading **open** one you can run locally via **Ollama** (`ollama run deepseek-r1`). This paradigm was popularized by **OpenAI's o-series and GPT-5** — we name them for context but **do not call them**; our labs stay on Claude, Gemini, and open models.
+- **Best-of-N.** Generate **N** answers and keep the best (by a scorer or a judge). Like self-consistency's vote, it trades extra calls for reliability.
+- **Self-consistency** (above) is the simplest form of test-time compute: sample several chains, vote.
+
+**The cost trade-off — and "overthinking."** More thinking is not free, and it is not always better. On easy tasks, reasoning models can **overthink** — burning tokens and even *talking themselves out of* a correct first answer (**diminishing returns**). Rule of thumb: turn on extended thinking for genuinely **multi-step** problems (math, logic, planning, hard code); leave it **off** for lookups, classification, and formatting, where it just adds cost and latency.
+
+```python
+# Claude extended thinking — give the model a token budget to reason first
+client.messages.create(
+    model="claude-sonnet-4-6", max_tokens=2000,
+    thinking={"type": "enabled", "budget_tokens": 1024},   # the "think longer" knob
+    messages=[{"role": "user", "content": "A bat and a ball cost $1.10..."}],
+)
+```
+
+See the new cell at the end of `code/03_reasoning_and_cot.ipynb` for an extended-thinking demo (Claude + a Gemini variant, with a no-key scripted fallback).
+
+---
+
+## 4.6 From prompt engineering to **context engineering** *(2026)*
+In 2026 the craft is being reframed: a single clever prompt matters less than **what you put in the context window and when**. This is **context engineering** — managing the *whole* set of tokens (system prompt, examples, retrieved docs, tool results, history) the model sees at each step. Three ideas worth knowing:
+
+- **Compaction.** Long chats and agent runs fill the context window. **Compaction** periodically **summarizes** older turns into a compact note so the conversation can continue without overflowing — you keep the gist, drop the bulk.
+- **Just-in-time (JIT) retrieval.** Instead of stuffing everything in up front, fetch the *specific* facts or documents you need **right when you need them** (this is the engine behind RAG, Week 11). Smaller, fresher context beats a giant one.
+- **"Lost in the middle" / context rot.** A key finding: models attend **less to the middle** of a long context than to its **beginning and end**. Padding a prompt with everything can *hurt* — important instructions buried in the middle get under-weighted. Put what matters at the **top or bottom**, and keep context lean.
+
+Takeaway: as inputs grow (long docs, tools, multi-turn agents), **curating** the context becomes as important as wording the prompt.
+
+> **Responsible AI —** prompts and few-shot examples shape the model's behavior, so they can **inject bias**: skewed or unrepresentative examples push the model toward skewed outputs. Choose few-shot examples deliberately and inclusively, and sanity-check outputs across different groups.
+
+---
+
 ## 5. Delimiters & prompt injection
 Wrap user-supplied or untrusted **data** in clear **delimiters** (triple quotes, XML-like tags) and tell the model to treat it as data, not instructions. This improves reliability and reduces **prompt injection** (where text in the data tries to hijack your instructions).
 
@@ -162,7 +200,8 @@ The **prompting techniques are identical**; only the call surface differs. See `
 ---
 
 ## 9. Reading & videos
-- Anthropic: *Prompt engineering overview*, *Use XML tags*, *System prompts*, *Chain-of-thought* (Canvas).
+- Anthropic: *Prompt engineering overview*, *Use XML tags*, *System prompts*, *Chain-of-thought*, *Extended thinking* (Canvas).
+- 2026 context: *test-time compute / reasoning models* (DeepSeek-R1), *context engineering* (compaction, just-in-time retrieval, "lost in the middle") — overview links in Canvas.
 - Google: *Prompting strategies* and *structured output / JSON mode* docs.
 - Reading: prompt-patterns sections of the **Compact Guide to LLMs** (Canvas).
 - Video: "Few-shot & chain-of-thought prompting" (linked in Canvas).
@@ -187,4 +226,4 @@ There is **no standalone weekly assignment** this week. The exercises below are 
 ---
 
 ## Key terms
-**prompt engineering**, **zero-shot**, **few-shot**, **system / role prompt**, **chain-of-thought (CoT)**, **zero-shot CoT**, **few-shot CoT**, **self-consistency**, **majority vote**, **delimiters**, **prompt injection**, **structured output / JSON mode**, **schema**, **iterative refinement**, **eval set**, **temperature**.
+**prompt engineering**, **zero-shot**, **few-shot**, **system / role prompt**, **chain-of-thought (CoT)**, **zero-shot CoT**, **few-shot CoT**, **self-consistency**, **majority vote**, **delimiters**, **prompt injection**, **structured output / JSON mode**, **schema**, **iterative refinement**, **eval set**, **temperature**, **test-time compute**, **extended thinking / thinking budget**, **reasoning model (DeepSeek-R1)**, **best-of-N**, **overthinking / diminishing returns**, **context engineering**, **compaction**, **just-in-time retrieval**, **"lost in the middle" / context rot**.

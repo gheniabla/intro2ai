@@ -11,8 +11,9 @@ slides = [
         "What an agent is: an LLM in a loop with tools",
         "The agent loop: reason → act → observe → repeat",
         "Tool / function calling in Claude AND Gemini",
-        "The Model Context Protocol (MCP): client vs. server",
-        "Serve a small agent behind a Flask endpoint",
+        "MCP: client vs. server — and BUILD a minimal MCP server",
+        "Agent memory: short-term vs long-term (semantic/episodic/procedural)",
+        "Serve a small agent behind a Flask endpoint (with guardrails)",
         "Agent safety (prompt injection) + evaluation (scorecard)",
         "Assignment A10: build + serve a tool-using agent"]},
 
@@ -63,6 +64,28 @@ slides = [
         "Separation: tool authors & app builders share a contract",
         "Ecosystem: growing library of ready-made servers",
         ("In Claude Code: claude mcp add ...  -> tools the agent can call", 1)]},
+    {"type": "code", "title": "Build a Minimal MCP Server (see it in code)",
+     "code": "from mcp.server.fastmcp import FastMCP\n"
+             "server = FastMCP(\"cafe\")\n\n"
+             "@server.tool()                 # a callable ACTION\n"
+             "def get_price(item: str) -> int:\n"
+             "    return {\"coffee\": 4, \"tea\": 3}.get(item, 0)\n\n"
+             "@server.resource(\"menu://today\")   # readable DATA\n"
+             "def menu_today() -> str:\n"
+             "    return \"coffee: $4\\ntea: $3\"\n"
+             "# claude mcp add cafe -- python cafe_server.py",
+     "caption": "04_mcp_intro.ipynb: 1 tool + 1 resource, client lists & calls them (no-dep fallback)"},
+    {"type": "bullets", "title": "Agent Memory (so it stops forgetting)", "bullets": [
+        "Working / short-term: the conversation in the context window",
+        "Long-term, persisted across sessions, in three flavors:",
+        ("semantic = facts · episodic = past events · procedural = how-to", 1),
+        "Usually vector-store-backed: embed -> retrieve (RAG on its own history)",
+        ("Libraries: Mem0, Letta — don't hand-roll storage/retrieval", 1)]},
+    {"type": "bullets", "title": "MCP Security — Connecting a Server Is an Attack Surface", "bullets": [
+        "A server is external code feeding your agent data + actions",
+        "Injection via tool/resource results: treat MCP output as DATA, scan it",
+        "Over-broad permissions: only trusted servers; least-privilege ALLOWED_TOOLS",
+        ("Human-in-the-loop for consequential server tools (writes, payments)", 1)]},
 
     {"type": "code", "title": "Serve It with Flask",
      "code": "@app.route(\"/ask\", methods=[\"POST\"])\n"
@@ -98,11 +121,11 @@ slides = [
      "caption": "Measure: right tool? right answer? -> a number you can track. (Week 17 scales this up.)"},
 
     {"type": "closing", "title": "This Week — To Do", "bullets": [
-        "Run 01_agents_tool_calling.ipynb (Claude + Gemini loops)",
-        "Add a second tool of your own",
+        "Run 01_agents_tool_calling.ipynb (Claude + Gemini loops; see max-turns fire)",
+        "Run 04_mcp_intro.ipynb — build a minimal MCP server (tool + resource)",
         "Run 03_agent_safety_and_eval.ipynb (injection + scorecard)",
         "Capstone: 'My Assistant' v3 — one tool + a safety guardrail",
-        "Serve your agent via Flask (/ask) — run agent_app.py",
+        "Serve your agent via Flask (/ask) — run agent_app.py (now guardrailed)",
         "Submit Assignment A10 by Sunday 11:59 PM PT"]},
 ]
 

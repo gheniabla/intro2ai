@@ -53,7 +53,10 @@ score = client.messages.create(
     messages=[{"role": "user", "content": judge_prompt}],
 ).content[0].text
 ```
-**Judge hygiene:** give a clear rubric, ask for structured output (a number or JSON), keep temperature low, watch for **bias** (judges can favor longer answers or their own style), and spot-check against human judgment.
+**Judge hygiene:** give a clear rubric, ask for structured output (a number or JSON), keep temperature low, and spot-check against human judgment. Critically, watch for three documented **judge biases**:
+- **Position bias** — when comparing two answers, judges tend to favor whichever appears *first* (or sometimes second). Mitigate by **swapping the order** and averaging, or by scoring each answer independently against a rubric.
+- **Verbosity bias** — judges over-reward *longer*, more elaborate answers even when a short one is correct. Mitigate by putting *conciseness* in the rubric and capping length.
+- **Self-preference bias** — a model tends to rate outputs from **its own family** more favorably. Mitigate by using a **cross-family judge** (e.g., grade Claude outputs with Gemini, or vice-versa) or a human spot-check. This week's notebook runs **two judges (Claude and Gemini)** on the same answers precisely so you can see and counter self-preference.
 
 ---
 
@@ -97,6 +100,18 @@ LLMs predict plausible text — they are **not** databases, calculators, or judg
 
 ---
 
+## 4b. Responsible AI — beyond the technical failures
+The risks in §4 are mostly *technical* failure modes. **Responsible AI** is the broader question of building systems that are fair, respectful of people, honest about what they are, and mindful of their effect on the world. As a builder you own these, not just the model maker.
+
+- **Bias & fairness.** Models learn the patterns — and prejudices — in their training data, so outputs can systematically advantage or harm groups (by race, gender, dialect, disability, etc.). *Do:* test across **diverse, representative inputs**; measure error rates **per group**, not just overall; keep a **human in the loop** for consequential decisions (hiring, lending, medical, legal); document who could be harmed.
+- **Privacy & PII.** Never send secrets or personal data to a model you don't control; **redact PII** (names, emails, IDs) on the way in, store only what you need, and check provider **data-retention** terms. Treat user data as a liability, not an asset.
+- **Transparency & disclosure.** People should know when they're talking to or reading output from an AI. **Disclose** AI use, **label AI-generated media** (provenance/watermarking — Week 15), cite sources, and be honest about confidence and limitations rather than projecting false certainty.
+- **Societal impact.** Zoom out from your app: GenAI shifts **jobs** and automates tasks; it can mass-produce **misinformation** and persuasive fakes at scale; and training/serving large models carries a real **environmental cost** (energy, water, compute). None of this means "don't build" — it means build deliberately: choose the **smallest sufficient model**, weigh who benefits and who bears the cost, and prefer uses where AI augments people rather than quietly replacing accountability.
+
+**Bottom line:** *responsible* is a design requirement, not a disclaimer. Bake fairness checks, PII handling, disclosure, and a sober read of impact into the project — the same way you bake in evaluation.
+
+---
+
 ## 5. Course wrap-up
 You went from Python review → data & ML → neural nets → LLMs, prompting, RAG, agents/MCP, AI-assisted coding, multimodal, fine-tuning/ops, and now evaluation & safety. You can build, ground, serve, **and measure** a GenAI system — and reason about its risks. That is a complete, current AI engineering skill set.
 
@@ -129,5 +144,5 @@ Your capstone applies the semester's stack to a problem you care about. **M5 is 
 ---
 
 ## Key terms
-**evaluation**, **test case**, **exact match**, **rubric**, **LLM-as-judge**, **eval harness**, **hallucination**, **bias**, **prompt injection**, **privacy/PII**, **IP/copyright**, **responsible use**, **groundedness**.
+**evaluation**, **test case**, **exact match**, **rubric**, **LLM-as-judge**, **position bias**, **verbosity bias**, **self-preference bias**, **eval harness**, **hallucination**, **bias**, **prompt injection**, **privacy/PII**, **IP/copyright**, **responsible AI**, **fairness**, **transparency/disclosure**, **societal impact**, **responsible use**, **groundedness**.
 </content>

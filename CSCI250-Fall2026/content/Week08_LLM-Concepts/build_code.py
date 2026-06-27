@@ -149,6 +149,17 @@ llm_concepts = [
     ("md", "---\n### Recap\n"
            "Tokens → context window → sampling → in-context learning → hallucination. "
            "Next notebook: call **Claude**, **Gemini**, and a **local** model and compare them."),
+
+    ("md", "### 🎯 Start My Assistant — *just pick* (2 minutes)\n"
+           "Your **final project** begins this week, but the only thing to do now is **pick "
+           "your idea and track** — RAG / Tool-Using Agent / Multimodal / Fine-Tuned "
+           "(see `Final-Project-Capstone.md`). **Don't build the app this week.** The graded "
+           "proposal + a 'wow in 5 min' prototype is **Milestone M1, due Week 9** "
+           "(`capstone/M1.md`). Jot one line below — that's the whole task."),
+    ("code", "my_assistant_idea  = ''   # <- one line: what should your assistant help with?\n"
+             "my_assistant_track = ''   # <- one of: RAG | Agent | Multimodal | Fine-Tuned\n"
+             "print('Idea :', my_assistant_idea or '(fill me in — building comes in Week 9)')\n"
+             "print('Track:', my_assistant_track or '(pick one)')"),
 ]
 build_notebook(llm_concepts, os.path.join(CODE, "01_llm_concepts.ipynb"))
 
@@ -346,7 +357,10 @@ bpe = [
 
     ("md", "## 4. Fill-in #2 — encode new text with the learned merges\n"
            "**Your turn.** To encode, apply the learned merges **in the order they "
-           "were learned** (lower new_id first). Complete the loop."),
+           "were learned** (lower new_id first). Complete the loop.\n\n"
+           "> **Scope cap:** we apply each merge once, in order — enough to see the idea. "
+           "**Production BPE re-scans the sequence and keeps applying the highest-priority "
+           "merge until no merge rule applies anymore.** Same algorithm, run to completion."),
     ("code", "def encode(text, merges):\n"
              "    ids = list(text.encode('utf-8'))\n"
              "    # apply merges in learned order (new_id ascending)\n"
@@ -539,7 +553,10 @@ attention = [
 
     ("md", "## 5. Visualize the attention matrix as a heatmap\n"
            "Row *i* shows how much word *i* attends to every other word. Brighter = more "
-           "attention. **This is the picture researchers stare at to interpret models.**"),
+           "attention. **This is the picture researchers stare at to interpret models.**\n\n"
+           "> **Scope cap:** this is an **encoder-style** demo — every word attends to every "
+           "other word. Real **decoder-only** LLMs add a **causal mask** so a token can only "
+           "attend to tokens *before* it. We leave that out to keep the core idea clear."),
     ("code", "import matplotlib.pyplot as plt\n\n"
              "fig, ax = plt.subplots(figsize=(5, 4))\n"
              "im = ax.imshow(weights, cmap='viridis')\n"
