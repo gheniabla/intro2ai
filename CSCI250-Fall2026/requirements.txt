@@ -1,0 +1,23 @@
+# CSCI 250 — build/runtime dependencies
+# Student notebooks (Google Colab installs these per-notebook via !pip):
+anthropic
+google-generativeai
+ollama
+transformers
+sentence-transformers
+langchain
+langchain-community
+llama-index
+llama-index-embeddings-huggingface
+chromadb
+scikit-learn
+matplotlib
+numpy
+pandas
+
+# Authoring / build tools (instructor, to regenerate slides, notebooks, flyer):
+python-pptx        # tools/slidegen.py
+pytest             # Week 12 starter repo
+reportlab          # flyer/build_flyer.py (PDF)
+pymupdf            # flyer/build_flyer.py (PNG preview)
+segno              # QR code generation

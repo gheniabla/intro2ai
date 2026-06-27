@@ -135,6 +135,28 @@ Hosted vs. self-hosted: a **hosted API** (Claude, Gemini) means no GPU to manage
 - **Shorten context** (RAG retrieves only what's needed) and **cap output length**.
 - **Quantize / batch** for self-hosted models.
 
+### 5.4 Guardrails — validate the inputs and outputs
+A served pipeline faces untrusted input and emits text other systems act on, so wrap the model call in **guardrails**:
+- **Input validation:** length/format limits, allow-listed fields, and a **prompt-injection** check — keep *trusted instructions* (your system prompt) separate from *untrusted data* (user text, retrieved docs), and never auto-`eval`/shell model output.
+- **Output validation:** verify the shape (e.g., JSON schema), reject or repair malformed/over-long responses, and scan for banned/unsafe content before returning.
+- **PII handling:** don't send secrets/PII to a model you don't control; redact obvious PII (emails, phone numbers, keys) on the way in, and log redacted text only.
+
+```python
+import re
+def guard_input(text: str, max_chars: int = 4000) -> str:
+    if len(text) > max_chars:                       # cheap DoS / cost guard
+        raise ValueError("input too long")
+    text = re.sub(r"[\w.+-]+@[\w-]+\.[\w.-]+", "[email]", text)  # redact PII
+    return text
+
+INJECTION = re.compile(r"ignore (all|previous) instructions", re.I)
+def looks_injected(text: str) -> bool:
+    return bool(INJECTION.search(text))             # flag, then handle as untrusted data
+```
+You'll wire input + output guardrails (plus the cost report from §5.2) into your Final Project pipeline for **Capstone M4**.
+
+> **🎯 Capstone M4 — hardening (guardrails + cost report).** Add input/output **guardrails** (validation, injection defense, PII redaction) *and* a **cost/latency report** (tokens + estimated $ per request) to your "My Assistant" pipeline. This is the v4 → production-hardening step before you ship and present in **M5** (Week 17).
+
 ---
 
 ## 6. Reading & videos

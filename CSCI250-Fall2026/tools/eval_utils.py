@@ -48,17 +48,38 @@ def _gemini(prompt: str, model: str = "gemini-2.5-flash") -> str | None:
         return None
 
 
+def _balanced_end(text: str, start: int) -> int:
+    """Index of the '}' that closes the '{' at `start`, or -1 if unbalanced."""
+    depth = 0
+    for i in range(start, len(text)):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+    return -1
+
+
 def _extract_json(text: str) -> dict:
-    """Pull the first {...} JSON object out of a model response."""
+    """Pull the first *balanced* {...} JSON object out of a model response.
+
+    Robust to prose/extra braces after the object and to ```json code fences,
+    which a greedy `\\{.*\\}` match would mishandle.
+    """
     if not text:
         return {}
-    m = re.search(r"\{.*\}", text, re.S)
-    if not m:
-        return {}
-    try:
-        return json.loads(m.group(0))
-    except Exception:
-        return {}
+    text = text.replace("```json", "").replace("```", "")
+    start = text.find("{")
+    while start != -1:
+        end = _balanced_end(text, start)
+        if end != -1:
+            try:
+                return json.loads(text[start:end + 1])
+            except Exception:
+                pass  # not valid JSON; try the next "{"
+        start = text.find("{", start + 1)
+    return {}
 
 
 def llm_judge(question: str, answer: str, rubric: str = JUDGE_RUBRIC_DEFAULT,
@@ -82,9 +103,13 @@ def llm_judge(question: str, answer: str, rubric: str = JUDGE_RUBRIC_DEFAULT,
 
 
 def exact_match(answer: str, expected: str) -> int:
-    """1 if normalized strings match, else 0 (the simplest baseline metric)."""
+    """1 if normalized strings match, else 0 (the simplest baseline metric).
+
+    Returns 0 when `expected` is empty/missing (two blanks are not a match).
+    """
     norm = lambda s: re.sub(r"\s+", " ", (s or "").strip().lower())
-    return int(norm(answer) == norm(expected))
+    a, e = norm(answer), norm(expected)
+    return int(bool(e) and a == e)
 
 
 def scorecard(rows, score_key: str = "score") -> dict:

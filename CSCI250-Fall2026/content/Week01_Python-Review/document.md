@@ -141,7 +141,7 @@ See `code/02_first_ai_calls.ipynb` for the full, runnable versions of all three.
 **Goal:** prove your environment works and make your first AI calls.
 
 1. Open `code/01_python_review.ipynb`, complete the 5 short exercises.
-2. Open `code/02_first_ai_calls.ipynb`. Add your API keys (via Colab Secrets) and run all cells so you get a response from **Claude**, **Gemini**, and one **local** model (Ollama).
+2. Open `code/02_first_ai_calls.ipynb`. Add your API keys (via Colab Secrets) and run all cells so you get a response from **Claude** and **Gemini**. Running a **local** model (Ollama) is **optional in Colab** (no server is started there) — do it only if you're running locally or you start a server in Colab first.
 3. Install **Claude Code** and paste the output of `claude --help`.
 4. Write a 150-word reflection: what surprised you about the three models' answers to the same prompt?
 5. **Submit:** your completed notebooks (or Colab share links) + the reflection. Include a one-line **AI Use** note.

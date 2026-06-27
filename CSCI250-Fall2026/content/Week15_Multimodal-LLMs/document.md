@@ -103,7 +103,7 @@ This is powerful for analytics and accessibility, but remember the values are **
 ---
 
 ## 6. A note on audio (briefly)
-Gemini also accepts **audio** files (e.g., transcribe or summarize a clip) via the same `generate_content([...])` pattern with an uploaded audio part. Claude's API is image+text focused; for audio with Claude you would transcribe first (e.g., a local Whisper model) and pass the text. We mention audio for awareness — the lab stays on images.
+Gemini also accepts **audio** files (e.g., transcribe or summarize a clip) via the same `generate_content([...])` pattern with an uploaded audio part — the simplest free path for audio. Claude's API is image+text focused; for audio with Claude you would transcribe first and pass the text. To transcribe locally, use the **open-source Whisper model via Hugging Face** (`transformers`) or **faster-whisper** — these are the openly licensed speech-to-text weights you run yourself, **not** the OpenAI hosted product. We mention audio for awareness — the lab stays on images.
 
 ---
 

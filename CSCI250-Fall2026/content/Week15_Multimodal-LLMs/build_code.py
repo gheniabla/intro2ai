@@ -9,6 +9,13 @@ os.makedirs(CODE, exist_ok=True)
 
 # ---------------------------------------------------------------- notebook 1
 multimodal_basics = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A generated 'PALOMAR CAFE' sign image, then **Claude and Gemini** reading it "
+           "back as **alt-text** and exact **OCR** lines (`Open 7am - 3pm`, ...).\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku) "
+           "· **Keys:** none to build/preview the image — add `ANTHROPIC_API_KEY` and/or "
+           "`GEMINI_API_KEY` for the vision calls (each is skipped gracefully if missing)."),
+
     ("md", "# Week 15 · Notebook 1 — Multimodal Basics (Describe & OCR)\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Send the **same image + prompt** to **Claude** and **Gemini** vision models "
@@ -61,7 +68,13 @@ multimodal_basics = [
 
     ("md", "## 3. Helpers: send an image to Claude and to Gemini\n"
            "Both helpers return a string and never crash if a key is missing."),
-    ("code", "import base64\n\n"
+    ("code", "import base64, os\n\n"
+             "def media_type_for(path):\n"
+             "    \"\"\"Map a file extension to the Claude media_type (students may upload JPG).\"\"\"\n"
+             "    ext = os.path.splitext(path)[1].lower()\n"
+             "    return {'.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',\n"
+             "            '.png': 'image/png', '.gif': 'image/gif',\n"
+             "            '.webp': 'image/webp'}.get(ext, 'image/png')\n\n"
              "def ask_claude(image_path, prompt, model='claude-sonnet-4-6'):\n"
              "    if not HAVE_CLAUDE:\n"
              "        return '[Claude skipped — no ANTHROPIC_API_KEY set]'\n"
@@ -72,7 +85,7 @@ multimodal_basics = [
              "        model=model, max_tokens=500,\n"
              "        messages=[{'role': 'user', 'content': [\n"
              "            {'type': 'image', 'source': {'type': 'base64',\n"
-             "                'media_type': 'image/png', 'data': b64}},\n"
+             "                'media_type': media_type_for(image_path), 'data': b64}},\n"
              "            {'type': 'text', 'text': prompt}]}])\n"
              "    return msg.content[0].text"),
     ("code", "def ask_gemini(image_path, prompt, model='gemini-2.5-flash'):\n"
@@ -107,11 +120,19 @@ build_notebook(multimodal_basics, os.path.join(CODE, "01_multimodal_basics.ipynb
 
 # ---------------------------------------------------------------- notebook 2
 charts_and_extraction = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A bar chart with **known** values, read back by Claude/Gemini as JSON, then "
+           "scored against ground truth — e.g. `Claude MAE : 2.0`.\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku) "
+           "· **Keys:** none to build the chart — add `ANTHROPIC_API_KEY` and/or "
+           "`GEMINI_API_KEY` for the vision read-back (each skipped gracefully if missing)."),
+
     ("md", "# Week 15 · Notebook 2 — Reading Charts & Structured Extraction\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Generate a **bar chart with known values**, ask a vision model to read it back "
            "as **JSON**, then **check its accuracy against the ground truth**. This is the "
-           "core skill behind the Final Project 'chart reader' / 'receipt reader' (Track D).\n\n"
+           "core skill behind the Final Project 'chart reader' / 'receipt reader' (the "
+           "Multimodal track).\n\n"
            "> Cells degrade gracefully if no API key is set."),
 
     ("md", "## 0. Install + keys"),

@@ -19,7 +19,7 @@ By the end of this week you will be able to:
 ## 0. Midterm logistics (read first)
 - **Midterm Exam date:** **Saturday, October 11, 2026**, available **5:30 PM – 11:59 PM Pacific** on Canvas.
 - **AI-restricted:** the midterm is a **closed-AI** exam. You may **not** use Claude, Gemini, Claude Code, Copilot, or any AI assistant during the exam. This is an honor-code expectation; treat it like a proctored test.
-- **Coverage:** Weeks 1–6 (Python → NumPy → Pandas/Matplotlib → ML intro → regression/classification → neural-network foundations).
+- **Coverage:** **Weeks 1–6 (reviewed in Week 7)** — Python → NumPy → Pandas/Matplotlib → ML intro → regression/classification → neural-network foundations.
 - **Format:** a mix of multiple-choice, short-answer, "read this code / what does it print," and a few "explain in 2–3 sentences" conceptual items.
 - The **practice midterm** below mirrors the format. It is also AI-restricted — take it on your own first, *then* check answers.
 
@@ -108,7 +108,7 @@ Keep this picture in your head — most exam questions are "which step is this?"
 ## 6. Lab / assignment — **Midterm Exam (Oct 11)**
 There is no separate lab this week. Your deliverable is the **Midterm Exam**:
 1. Work through this **study guide** and run `code/01_review_solutions.ipynb` (worked solutions across Weeks 1–6).
-2. Take the **practice midterm** (`code/02_practice_midterm.ipynb`) under exam conditions — **no AI** — then check answers in the solutions notebook.
+2. Take the **practice midterm** (`code/02_practice_midterm.ipynb`) under exam conditions — **no AI** — then check answers in the solutions notebook, which has **worked answers for every part** (A–E). *No surprises:* nothing on the real midterm is outside what's reviewed here.
 3. Sit the **real Midterm** on **Saturday, Oct 11, 5:30–11:59 PM PT** on Canvas. **AI tools are not permitted** during the exam.
 
 *The midterm is graded; the practice materials are not, but they are the best predictor of how you'll do.*

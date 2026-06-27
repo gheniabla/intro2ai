@@ -9,14 +9,24 @@ os.makedirs(CODE, exist_ok=True)
 
 # ---------------------------------------------------------------- notebook 1
 patterns = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A sentiment-classification prompt run six different ways, ending with a "
+           "**parsed JSON dict** like `{'name': 'Maria', 'role': 'data engineer', 'years_experience': 6}`.\n\n"
+           "**Time:** ~8 min · **Cost:** free (cheapest model: Claude Haiku / Gemini Flash) "
+           "· **Keys:** none required (a scripted fallback runs the whole demo) — add "
+           "`ANTHROPIC_API_KEY` for live Claude calls."),
+
     ("md", "# Week 9 · Notebook 1 — Prompt Patterns (Claude)\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Six core prompting patterns, each as a runnable cell:\n"
            "**zero-shot → few-shot → role/system → chain-of-thought → delimiters → JSON output.**\n\n"
-           "> Uses the **Claude** API. In Colab use the 🔑 *Secrets* panel and "
+           "> Uses the **Claude** API when a key is present, and a **scripted fallback** otherwise so "
+           "every cell still shows output. In Colab use the 🔑 *Secrets* panel and "
            "`userdata.get('ANTHROPIC_API_KEY')`; locally use an environment variable. **Never commit keys.**"),
 
-    ("md", "## 0. Install + keys + a helper"),
+    ("md", "## 0. Install + keys + a helper (works with or without a key)\n"
+           "`ask()` calls Claude when `ANTHROPIC_API_KEY` is set; otherwise it returns a "
+           "*canned* answer so the whole notebook still produces a visible result."),
     ("code", "!pip -q install anthropic"),
     ("code", "import os\n"
              "try:\n"
@@ -24,26 +34,41 @@ patterns = [
              "    os.environ['ANTHROPIC_API_KEY'] = userdata.get('ANTHROPIC_API_KEY')\n"
              "except Exception:\n"
              "    pass\n\n"
-             "import anthropic\n"
-             "client = anthropic.Anthropic()\n\n"
+             "HAVE_CLAUDE = bool(os.environ.get('ANTHROPIC_API_KEY'))\n\n"
+             "# Scripted stand-ins keyed by what the prompt is doing — so no-key runs still 'wow'.\n"
+             "def _fallback(prompt, system=None):\n"
+             "    p = prompt.lower()\n"
+             "    if 'years_experience' in p or 'resume' in p:\n"
+             "        return '{\"name\": \"Maria\", \"role\": \"data engineer\", \"years_experience\": 6}'\n"
+             "    if 'company' in p and 'sentiment' in p:\n"
+             "        return '{\"company\": \"Initech\", \"sentiment\": \"positive\"}'\n"
+             "    if 'def f' in p or 'review this code' in p:\n"
+             "        return '- Division by zero: `x/0` raises ZeroDivisionError\\n- Add a guard for x==0'\n"
+             "    if 'step by step' in p or '12 pens' in p:\n"
+             "        return '3 pens = $2, so 12 pens = 4 x $2. Answer: $8'\n"
+             "    if 'pwned' in p or 'ignore' in p:\n"
+             "        return 'The reviewer praises the product in one upbeat sentence.'\n"
+             "    return 'positive'   # default: the sentiment task\n\n"
              "def ask(prompt, system=None, temperature=0.0, max_tokens=400):\n"
-             "    \"\"\"One-shot Claude call returning the text.\"\"\"\n"
+             "    \"\"\"One-shot Claude call (or scripted fallback) returning the text.\"\"\"\n"
+             "    if not HAVE_CLAUDE:\n"
+             "        return _fallback(prompt, system)\n"
+             "    import anthropic\n"
+             "    client = anthropic.Anthropic()\n"
              "    kwargs = dict(model='claude-sonnet-4-6', max_tokens=max_tokens,\n"
              "                  temperature=temperature,\n"
              "                  messages=[{'role': 'user', 'content': prompt}])\n"
              "    if system:\n"
              "        kwargs['system'] = system\n"
              "    return client.messages.create(**kwargs).content[0].text\n\n"
-             "print('Anthropic key set:', bool(os.environ.get('ANTHROPIC_API_KEY')))"),
+             "print('Anthropic key set:', HAVE_CLAUDE,\n"
+             "      '(using live Claude)' if HAVE_CLAUDE else '(using scripted fallback)')"),
 
     ("md", "## 1. Zero-shot\n"
            "Describe the task; give no examples."),
     ("code", "zero = 'Classify the sentiment as positive, negative, or neutral: '\\\n"
              "       '\"The update fixed my bug but the UI got slower.\"'\n"
-             "try:\n"
-             "    print(ask(zero))\n"
-             "except Exception as e:\n"
-             "    print('Set ANTHROPIC_API_KEY to run:', e)"),
+             "print(ask(zero))"),
 
     ("md", "## 2. Few-shot\n"
            "Add input → output examples to teach the task and lock the format."),
@@ -123,6 +148,13 @@ build_notebook(patterns, os.path.join(CODE, "01_prompt_patterns.ipynb"))
 
 # ---------------------------------------------------------------- notebook 2
 both = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- The **same prompt** answered side by side by **Claude and Gemini**, then a refined "
+           "extractor reporting `3/3 parsed cleanly.`\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku) "
+           "· **Keys:** `ANTHROPIC_API_KEY` and/or `GEMINI_API_KEY` (each provider is skipped "
+           "gracefully if its key is missing)."),
+
     ("md", "# Week 9 · Notebook 2 — Same Prompt, Claude vs Gemini (+ Refinement)\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Run **one prompt** on **both providers**, then run an **iterative refinement** loop "

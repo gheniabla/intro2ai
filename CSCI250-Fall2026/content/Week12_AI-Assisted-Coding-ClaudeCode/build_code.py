@@ -11,6 +11,11 @@ os.makedirs(CODE, exist_ok=True)
 
 # ============================================================ NOTEBOOK
 ai_coding = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- The AI's **first** `best_price` patch is **wrong** — it crashes on the empty-coupons "
+           "case — and your own test catches the bug, which you then fix.\n\n"
+           "**Time:** ~12 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku / "
+           "local Ollama) · **Keys:** ANTHROPIC_API_KEY"),
     ("md", "# Week 12 · Notebook 1 — The AI-as-Coder Loop\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Claude Code lives in your terminal — but the *idea* (reason → act → "
@@ -71,9 +76,12 @@ ai_coding = [
              "        if text.startswith('python'):\n"
              "            text = text[len('python'):]\n"
              "    return text.strip()\n\n"
+             "# NOTE: this fallback is the AI's *first* attempt — and it is BUGGY on purpose.\n"
+             "# It forgets the empty-coupons case, so max([]) raises ValueError. Your job\n"
+             "# (Section 3 below) is to CATCH that with the test and fix it.\n"
              "FALLBACK = '''\n"
              "def best_price(price, coupons):\n"
-             "    best = max(coupons) if coupons else 0\n"
+             "    best = max(coupons)              # BUG: crashes when coupons == []\n"
              "    result = price * (1 - best / 100)\n"
              "    return round(max(result, 0.0), 2)\n"
              "'''\n\n"
@@ -86,11 +94,20 @@ ai_coding = [
              "print(code)"),
     ("md", "## 3. Review, then run the test yourself\n"
            "**Never trust green you didn't run.** We exec the model's code in a scratch "
-           "namespace and run the asserts. Read the code above *before* you run this."),
+           "namespace and run the asserts. Read the code above *before* you run this.\n\n"
+           "> **Notice the AI's first attempt is wrong** — your job is to catch it with tests "
+           "and fix it. The cell below is wrapped in `try/except`: when the first patch crashes "
+           "on `best_price(100, [])`, that failure is the signal. Patch `code` to add the "
+           "empty-coupons guard (`if not coupons: ...`), then re-run until you see "
+           "`all tests passed`."),
     ("code", "ns = {}\n"
              "exec(code, ns)             # define best_price\n"
              "exec(TEST, ns)             # define run_tests\n"
-             "print(ns['run_tests'](ns['best_price']))"),
+             "try:\n"
+             "    print(ns['run_tests'](ns['best_price']))\n"
+             "except Exception as e:\n"
+             "    print('Test FAILED — the AI got it wrong:', repr(e))\n"
+             "    print('Fix the bug in `code` above (handle empty coupons), then re-run.')"),
     ("md", "## 4. Add YOUR own edge case\n"
            "The AI passed *our* tests. Did it handle a 0% coupon? Duplicate coupons? "
            "Add an assert the model wasn't given and re-run. This is the human-review "
@@ -224,19 +241,7 @@ write(os.path.join(REPO, "README.md"),
       "Then add one edge-case test of your own, commit on a feature branch,\n"
       "and write the 200-word reflection. See the Week 12 document for details.\n")
 
-# ---- reference solution (instructor / self-check). NOT imported by tests.
-write(os.path.join(PKG, "SOLUTION_NOTES.md"),
-      "# Reference solution (instructor / self-check)\n\n"
-      "Do not look until you've tried it yourself. One correct `best_price`:\n\n"
-      "```python\n"
-      "def best_price(price, coupons):\n"
-      "    if not coupons:\n"
-      "        return round(max(price, 0.0), 2)\n"
-      "    return apply_discount(price, max(coupons))\n"
-      "```\n\n"
-      "Why it passes:\n"
-      "- empty list -> price unchanged, rounded.\n"
-      "- `max(coupons)` is the single best discount.\n"
-      "- `apply_discount` already clamps at 0 and rounds to 2 dp.\n")
+# NOTE: no SOLUTION_NOTES.md is generated. The reference solution is kept by the
+# instructor OUTSIDE this repo so the starter_repo never leaks the answer to students.
 
 print("wrote Week 12 notebook + starter_repo to", CODE)

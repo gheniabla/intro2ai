@@ -2,6 +2,8 @@
 **CSCI 250 · Introduction to Artificial Intelligence · Fall 2026**
 *Week of November 2, 2026 · Online / Asynchronous*
 
+> **🎯 Capstone checkpoint —** "My Assistant" v2: **answer from your own documents** (RAG). Chunk, embed, and retrieve over a corpus you choose, then ground the answer in what you retrieved (see `capstone/M2.md`).
+
 ---
 
 ## Learning objectives

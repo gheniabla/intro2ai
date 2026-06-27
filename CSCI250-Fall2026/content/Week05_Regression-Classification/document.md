@@ -64,7 +64,7 @@ from sklearn.tree import DecisionTreeClassifier
 **Accuracy** = fraction correct. Fine when classes are balanced; **misleading when they are not.** If 99% of email is not-spam, a model that always says "not-spam" is 99% accurate and useless.
 
 Better tools, built from the **confusion matrix** (TP, FP, TN, FN):
-- **Precision** = TP / (TP + FP) — *of the items I flagged positive, how many were?* (cost of false alarms).
+- **Precision** = TP / (TP + FP) — *of the items I flagged positive, how many were actually positive?* (cost of false alarms).
 - **Recall** = TP / (TP + FN) — *of the actual positives, how many did I catch?* (cost of misses).
 - **F1** = harmonic mean of precision & recall — one number balancing both.
 ```python
@@ -95,12 +95,14 @@ print(scores.mean(), "±", scores.std())
 - The tell-tale sign of overfitting: a **large gap** between train and test scores.
 
 ### 4.3 Regularization
-**Regularization** penalizes model complexity to fight overfitting:
-- Logistic/linear regression: the `C` (inverse strength) or `alpha` parameter — `Ridge`, `Lasso`.
+**Regularization** penalizes model complexity to fight overfitting. Note the two parameters point in **opposite directions**:
+- `LogisticRegression` uses **`C`** — the *inverse* strength, so **smaller `C` = stronger regularization**.
+- `Ridge` / `Lasso` use **`alpha`** — the direct strength, so **larger `alpha` = stronger regularization**.
 - Decision tree: limit `max_depth`, `min_samples_leaf`.
 - k-NN: increase `k` (smoother boundary).
 ```python
-LogisticRegression(C=0.1)          # smaller C = stronger regularization
+LogisticRegression(C=0.1)           # smaller C  = stronger regularization
+Ridge(alpha=10.0)                   # larger alpha = stronger regularization
 DecisionTreeClassifier(max_depth=3) # shallower tree = less overfitting
 ```
 

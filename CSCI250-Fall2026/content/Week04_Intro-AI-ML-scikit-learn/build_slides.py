@@ -12,7 +12,7 @@ slides = [
         "Walk the end-to-end ML workflow: data → train → evaluate",
         "Meet scikit-learn: estimators, fit/predict",
         "Split data safely with train_test_split",
-        ("No graded assignment — but run both notebooks for A5 next week", 1)]},
+        ("Lab: Assignment A4 (6 pts, due Sun Sep 20)", 1)]},
 
     {"type": "section", "title": "AI vs ML vs DL vs GenAI"},
     {"type": "bullets", "title": "Nested, Not Interchangeable", "bullets": [
@@ -78,8 +78,7 @@ slides = [
         "Read the scikit-learn 'Getting Started' guide",
         "Run 01_ml_workflow.ipynb (AI/ML framing + workflow)",
         "Run 02_sklearn_basics.ipynb (fit/predict + split)",
-        "Post one takeaway in the Week 4 discussion",
-        "No graded assignment — get ready for A5"]},
+        "Submit Assignment A4 (6 pts, due Sun Sep 20)"]},
 ]
 
 if __name__ == "__main__":

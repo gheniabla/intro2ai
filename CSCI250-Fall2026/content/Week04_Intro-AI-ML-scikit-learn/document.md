@@ -12,7 +12,7 @@ By the end of this week you will be able to:
 4. Use **scikit-learn** estimators with the universal **`fit` / `predict`** API.
 5. Split data correctly with **`train_test_split`** and avoid the classic mistake of evaluating on training data.
 
-> **Time budget:** ~10 hours this week (lecture + slides + videos + notebooks). **No assignment this week** — but run both notebooks; you will lean on them heavily for A5 next week.
+> **Time budget:** ~10 hours this week (lecture + slides + videos + notebooks + **Lab A4**). Run both notebooks; they're also the launchpad for A5 next week.
 
 ---
 
@@ -128,13 +128,17 @@ The LLMs you called in Week 1 (Claude, Gemini) are **deep learning** models trai
 
 ---
 
-## 7. Lab / assignment
-**No graded assignment this week.** Instead:
-1. Run `code/01_ml_workflow.ipynb` — the AI/ML framing and the end-to-end workflow on a real dataset.
-2. Run `code/02_sklearn_basics.ipynb` — estimators, `fit`/`predict`, and `train_test_split` hands-on.
-3. Post one takeaway in the Week 4 discussion (ungraded, but recommended): *what surprised you about how little code a working model takes?*
+## 7. Lab — Assignment A4 (6 pts · due Sunday Sep 20, 11:59 PM PT)
+**Goal:** run a complete supervised-ML workflow in scikit-learn — **load → split → fit → evaluate → predict** — and internalize the cardinal rule: never judge a model on data it trained on. Full spec and rubric: `assignments/A4.md`.
 
-These notebooks are the launchpad for **A5** next week, so do not skip them.
+This week's two notebooks map directly to the A4 tasks:
+1. **Workflow (`code/01_ml_workflow.ipynb`).** Run all sections end-to-end, then **explain the cardinal rule in your own words** (Section 6): why is the score on the *training* set misleading? Reproduce the demonstration that train accuracy looks better than test accuracy.
+2. **The estimator API (`code/02_sklearn_basics.ipynb`).** Complete the **"Try it yourself"** section: load `iris` with `train_test_split` (`test_size=0.2`, `random_state=42`, `stratify=y`), fit a `KNeighborsClassifier`, and report **test accuracy** via `model.score(...)`.
+3. **Swap the model.** Re-run the same four-line pipeline with a different estimator (e.g., `DecisionTreeClassifier`); report both test accuracies and note that the API barely changed.
+4. **Why split?** In 2–3 sentences explain what `train_test_split` does and what `random_state` and `stratify` are for.
+5. **Stretch:** Switch to regression — load `diabetes`, fit `LinearRegression`, report `.score()` (R²); one sentence on how evaluating regression differs from classification.
+
+**Submit on Canvas:** both completed notebooks (or Colab links with outputs), your cardinal-rule explanation, the two accuracies, the split explanation, the stretch result, and a one-line **AI-Use** note. Correctness-graded — you may revise once after feedback.
 
 ---
 

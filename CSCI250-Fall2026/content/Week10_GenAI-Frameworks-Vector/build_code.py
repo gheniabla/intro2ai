@@ -162,6 +162,11 @@ build_notebook(embeddings_nb, os.path.join(CODE, "00_embeddings_intuition.ipynb"
 
 # ---------------------------------------------------------------- notebook 1
 langchain_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- The **same** prompt+parser chain runs through **Claude and then Gemini** by swapping "
+           "only the model, and a LlamaIndex retriever pulls the right chunk for a question.\n\n"
+           "**Time:** ~12 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku / "
+           "local Ollama) · **Keys:** ANTHROPIC_API_KEY"),
     ("md", "# Week 10 · Notebook 1 — LangChain & LlamaIndex Building Blocks\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Compose GenAI apps from reusable parts: **models → prompts → parsers → chains**, "
@@ -173,7 +178,7 @@ langchain_nb = [
     ("md", "## 0. Install frameworks"),
     ("code", "!pip -q install langchain langchain-core langchain-community \\\n"
              "    langchain-anthropic langchain-google-genai \\\n"
-             "    llama-index sentence-transformers"),
+             "    llama-index llama-index-embeddings-huggingface sentence-transformers"),
 
     ("md", "## 1. Load API keys safely\n"
            "In Colab use the 🔑 *Secrets* panel; locally use environment variables. "
@@ -282,6 +287,11 @@ build_notebook(langchain_nb, os.path.join(CODE, "01_langchain_llamaindex.ipynb")
 
 # ---------------------------------------------------------------- notebook 2
 chroma_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A query for \"What database holds vectors?\" returns the right stored sentence even "
+           "though the word \"database\" never appears in it — pure meaning-based search.\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku / "
+           "local Ollama) · **Keys:** none"),
     ("md", "# Week 10 · Notebook 2 — Embeddings & a ChromaDB Vector Store\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Turn text into vectors with **Hugging Face sentence-transformers**, then build "

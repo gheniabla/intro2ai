@@ -13,7 +13,7 @@ slides = [
         "GenAI safety: hallucination, bias, prompt injection, privacy",
         "Limits & responsible use",
         "Course wrap-up + Final Project logistics",
-        ("Final Project due Friday, Dec 19, 11:59 PM PT", 1)]},
+        ("Final Project due Friday, Dec 19, 11:59 PM PST", 1)]},
 
     {"type": "section", "title": "Why Evaluation Matters"},
     {"type": "bullets", "title": "Turn Vibes Into Numbers", "bullets": [
@@ -42,7 +42,7 @@ slides = [
              "Model answer: {answer}\n"
              "Reply with ONLY a number 1-5.'''\n"
              "score = client.messages.create(\n"
-             "    model='claude-sonnet-4-6', max_tokens=10,\n"
+             "    model='claude-sonnet-4-6', max_tokens=10, temperature=0,\n"
              "    messages=[{'role': 'user', 'content': prompt}],\n"
              ").content[0].text",
      "caption": "Judge hygiene: clear rubric, structured output, low temp, watch bias",
@@ -74,18 +74,18 @@ slides = [
         "Validate outputs before acting on them"]},
 
     {"type": "section", "title": "Wrap-Up & Final Project"},
-    {"type": "bullets", "title": "Final Project — Due Dec 19, 11:59 PM PT", "bullets": [
-        "Working notebook/app: a runnable GenAI pipeline (keys via Secrets)",
-        "Eval results: run your harness, report the score",
-        "1-2 page write-up incl. a safety note",
-        "5-minute recorded demo posted to Canvas",
+    {"type": "bullets", "title": "Final Project (Capstone M5) — Due Dec 19, 11:59 PM PST", "bullets": [
+        "Deployed PUBLIC demo: Gradio on HF Spaces or a Colab notebook (free tier)",
+        "GitHub repo + README: banner, setup, scorecard, model reflection, limits",
+        "Eval results: baseline vs. final from your harness",
+        "3-minute recorded screencast",
         ("AI-Use note (required, as all semester)", 1)]},
 
     {"type": "closing", "title": "This Week — To Do", "bullets": [
         "Run 01_eval_harness.ipynb (LLM-as-judge over test cases)",
         "Review the safety checklist against your project",
-        "Finish + record your Final Project demo",
-        "Submit the Final Project by Fri Dec 19, 11:59 PM PT",
+        "Deploy your public demo + record the 3-minute screencast",
+        "Submit the Final Project (M5) by Fri Dec 19, 11:59 PM PST",
         "Congratulations on finishing CSCI 250!"]},
 ]
 

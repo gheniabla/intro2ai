@@ -78,8 +78,9 @@ viz_az = [
              "import matplotlib.pyplot as plt"),
     ("md", "## 1. Get the data\n"
            "The full `A_Z-HandwrittenData.csv` (from Canvas) is large. To keep this notebook "
-           "fast and self-contained we **synthesize a small, balanced sample** with the same "
-           "structure (1 label column + 784 pixel columns). To use the **real** file instead, "
+           "fast and self-contained we **synthesize a small sample with intentionally uneven "
+           "per-letter counts** with the same structure (1 label column + 784 pixel columns). "
+           "The imbalance is on purpose — spotting it is the point of this lesson. To use the **real** file instead, "
            "upload it and set `USE_REAL = True`."),
     ("code", "USE_REAL = False   # set True after uploading A_Z-HandwrittenData.csv\n\n"
              "if USE_REAL:\n"

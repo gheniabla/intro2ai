@@ -9,19 +9,26 @@ os.makedirs(CODE, exist_ok=True)
 
 # ---------------------------------------------------------------- notebook 1
 lora_demo = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A **BEFORE vs AFTER** generation: `distilgpt2` produces rambling text, then the "
+           "**LoRA-fine-tuned** model answers in the short `### Response:` style it was trained on.\n\n"
+           "**Time:** ~6 min · **Cost:** free (runs on CPU; a Colab T4 GPU is faster but optional) "
+           "· **Keys:** none"),
     ("md", "# Week 16 · Notebook 1 — LoRA / PEFT Fine-Tuning Demo\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
-           "Fine-tune a **tiny open model** with **LoRA** (low-rank adapters) on a few "
+           "Fine-tune a **small open model** with **LoRA** (low-rank adapters) on a few "
            "instruction examples, using the Hugging Face stack — **no OpenAI**.\n\n"
-           "> **Run on a GPU:** Runtime → Change runtime type → **T4 GPU**.\n"
+           "> **GPU optional:** this runs on CPU; for speed use Runtime → Change runtime type → **T4 GPU**.\n"
            "> Every heavy import is guarded with try/except, so the notebook degrades "
-           "gracefully (clear message) if a GPU or library is missing."),
-    ("md", "## 0. Install the Hugging Face fine-tuning stack"),
-    ("code", "!pip -q install transformers datasets peft accelerate bitsandbytes 2>/dev/null\n"
+           "gracefully (clear message) if a library is missing."),
+    ("md", "## 0. Install the Hugging Face fine-tuning stack\n"
+           "We install `peft` for LoRA. (We skip `bitsandbytes`/QLoRA here — it needs a CUDA GPU "
+           "and won't load on CPU/Mac; see the QLoRA **concept-only** note in §3.)"),
+    ("code", "!pip -q install transformers datasets peft accelerate 2>/dev/null\n"
              "print('installed (or already present)')"),
     ("md", "## 1. Check the environment\n"
-           "We confirm a GPU is available and report VRAM. The demo still *builds* without "
-           "one, but real training needs a GPU."),
+           "We report whether a GPU is available. This tiny demo trains fine on **CPU**; a GPU "
+           "just makes it faster. (Real, large fine-tuning jobs do need a GPU.)"),
     ("code", "HAS_GPU = False\n"
              "try:\n"
              "    import torch\n"
@@ -31,7 +38,7 @@ lora_demo = [
              "        vram = torch.cuda.get_device_properties(0).total_memory / 1e9\n"
              "        print(f'GPU: {name}  ~{vram:.1f} GB VRAM')\n"
              "    else:\n"
-             "        print('No GPU detected. Switch the Colab runtime to a T4 GPU to train.')\n"
+             "        print('No GPU detected — fine. This small demo trains on CPU; a T4 GPU is just faster.')\n"
              "except Exception as e:\n"
              "    print('PyTorch not available yet:', e)"),
     ("md", "## 2. Memory math (why we use LoRA + quantization)\n"
@@ -43,10 +50,16 @@ lora_demo = [
              "    return params_billions * (bits / 8) * 2  # ~2 bytes/param at 16-bit\n\n"
              "for b in [16, 8, 4]:\n"
              "    print(f'7B model @ {b}-bit: ~{loading_gb(7, b):.1f} GB to load')"),
-    ("md", "## 3. A tiny instruction dataset\n"
+    ("md", "## 3. A tiny instruction dataset (with a validation split)\n"
            "Quality > quantity. Real projects use hundreds of clean, consistent examples; "
-           "here we use a handful so the demo runs fast."),
-    ("code", "train_examples = [\n"
+           "here we use a handful so the demo runs fast. We still hold out a couple of examples "
+           "as a **validation split** so we can watch for overfitting.\n\n"
+           "> **QLoRA — concept only (GPU required).** QLoRA loads the *frozen base in 4-bit* "
+           "(via `bitsandbytes` + `BitsAndBytesConfig`) and trains LoRA adapters on top, so even "
+           "billion-parameter models fit one GPU. `bitsandbytes` needs CUDA and won't run on "
+           "CPU/Mac, so this demo uses **plain LoRA**; QLoRA is the same code plus a "
+           "`quantization_config=` argument on `from_pretrained`."),
+    ("code", "all_examples = [\n"
              "    {'instruction': 'Summarize in one sentence.',\n"
              "     'input': 'The mitochondria is the powerhouse of the cell.',\n"
              "     'output': 'Mitochondria produce most of the cell\\'s energy.'},\n"
@@ -56,16 +69,28 @@ lora_demo = [
              "    {'instruction': 'Summarize in one sentence.',\n"
              "     'input': 'A GPU runs many matrix operations in parallel.',\n"
              "     'output': 'GPUs do parallel matrix math, ideal for neural networks.'},\n"
+             "    {'instruction': 'Summarize in one sentence.',\n"
+             "     'input': 'A vector database stores embeddings for similarity search.',\n"
+             "     'output': 'Vector databases index embeddings for fast similarity search.'},\n"
+             "    {'instruction': 'Summarize in one sentence.',\n"
+             "     'input': 'Transformers use attention to weigh relationships between tokens.',\n"
+             "     'output': 'Transformers use attention to relate tokens in a sequence.'},\n"
              "]\n"
+             "# Hold out the last 2 examples as a validation split.\n"
+             "train_examples = all_examples[:3]\n"
+             "val_examples = all_examples[3:]\n"
              "def format_example(ex):\n"
              "    return (f\"### Instruction: {ex['instruction']}\\n\"\n"
              "            f\"### Input: {ex['input']}\\n\"\n"
              "            f\"### Response: {ex['output']}\")\n"
+             "print(f'{len(train_examples)} train · {len(val_examples)} val')\n"
              "print(format_example(train_examples[0]))"),
     ("md", "## 4. Load a small base model + attach a LoRA adapter\n"
-           "We use a tiny open model so it fits on a free Colab GPU. The base weights are "
-           "**frozen**; only the LoRA `A`/`B` matrices train (often <1% of params)."),
-    ("code", "MODEL_ID = 'sshleifer/tiny-gpt2'  # tiny open model — fast demo\n"
+           "We use **`distilgpt2`** — a small but **real** pretrained model (unlike a randomly "
+           "initialized tiny model, it produces actual English, so fine-tuning visibly changes "
+           "its style). The base weights are **frozen**; only the LoRA `A`/`B` matrices train "
+           "(often <1% of params)."),
+    ("code", "MODEL_ID = 'distilgpt2'  # small but REAL pretrained model — meaningful output\n"
              "model = tokenizer = None\n"
              "try:\n"
              "    from transformers import AutoModelForCausalLM, AutoTokenizer\n"
@@ -79,28 +104,62 @@ lora_demo = [
              "    model = get_peft_model(model, lora)\n"
              "    model.print_trainable_parameters()  # see the <1% figure\n"
              "except Exception as e:\n"
-             "    print('Could not load model/PEFT (no GPU or libs?):', e)\n"
+             "    print('Could not load model/PEFT (libs missing?):', e)\n"
              "    print('That is OK — the rest of the notebook still explains the workflow.')"),
+    ("md", "## 4b. BEFORE: generate with the un-tuned model\n"
+           "Prompt the base model **before** fine-tuning. `distilgpt2` is a real model, so it "
+           "writes fluent English — but it ignores our `### Response:` format and rambles. "
+           "We'll compare this to the AFTER output in §5b."),
+    ("code", "PROMPT = ('### Instruction: Summarize in one sentence.\\n'\n"
+             "          '### Input: Neural networks learn patterns from data.\\n'\n"
+             "          '### Response:')\n\n"
+             "def generate(m, prompt, max_new_tokens=40):\n"
+             "    if m is None or tokenizer is None:\n"
+             "        return '[model not loaded]'\n"
+             "    import torch\n"
+             "    ids = tokenizer(prompt, return_tensors='pt').to(m.device)\n"
+             "    with torch.no_grad():\n"
+             "        out = m.generate(**ids, max_new_tokens=max_new_tokens, do_sample=False,\n"
+             "                         pad_token_id=tokenizer.pad_token_id)\n"
+             "    return tokenizer.decode(out[0][ids['input_ids'].shape[1]:],\n"
+             "                            skip_special_tokens=True).strip()\n\n"
+             "before = generate(model, PROMPT)\n"
+             "print('BEFORE fine-tuning:\\n', before)"),
     ("md", "## 5. Tokenize and train for a couple of epochs\n"
            "We keep `num_train_epochs` tiny so it finishes quickly. Watch the **loss** drop. "
-           "If validation loss rises while training loss falls, you are **overfitting**."),
+           "We pass an **`eval_dataset`** (our validation split) so the Trainer reports "
+           "**validation loss** each epoch — if it rises while training loss falls, you are "
+           "**overfitting**.\n\n"
+           "Note: we **do not** pad to `max_length` here. The "
+           "`DataCollatorForLanguageModeling` pads each batch dynamically and masks pad tokens "
+           "in the labels, so the model isn't trained to predict padding."),
     ("code", "try:\n"
              "    from datasets import Dataset\n"
              "    from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling\n"
-             "    texts = [format_example(e) for e in train_examples]\n"
-             "    ds = Dataset.from_dict({'text': texts})\n"
-             "    def tok(batch):\n"
-             "        return tokenizer(batch['text'], truncation=True, padding='max_length', max_length=64)\n"
-             "    ds = ds.map(tok, batched=True, remove_columns=['text'])\n"
+             "    def to_ds(examples):\n"
+             "        texts = [format_example(e) for e in examples]\n"
+             "        d = Dataset.from_dict({'text': texts})\n"
+             "        # No padding here — the collator pads each batch and masks pads in labels.\n"
+             "        return d.map(lambda b: tokenizer(b['text'], truncation=True, max_length=64),\n"
+             "                     batched=True, remove_columns=['text'])\n"
+             "    train_ds, val_ds = to_ds(train_examples), to_ds(val_examples)\n"
              "    collator = DataCollatorForLanguageModeling(tokenizer, mlm=False)\n"
-             "    args = TrainingArguments(output_dir='out', num_train_epochs=3,\n"
+             "    args = TrainingArguments(output_dir='out', num_train_epochs=8,\n"
              "        per_device_train_batch_size=1, learning_rate=2e-4,\n"
-             "        logging_steps=1, report_to=[])\n"
-             "    trainer = Trainer(model=model, args=args, train_dataset=ds, data_collator=collator)\n"
+             "        logging_steps=1, eval_strategy='epoch', report_to=[])\n"
+             "    trainer = Trainer(model=model, args=args, train_dataset=train_ds,\n"
+             "                      eval_dataset=val_ds, data_collator=collator)\n"
              "    trainer.train()\n"
              "    print('Training complete.')\n"
              "except Exception as e:\n"
-             "    print('Skipping training (no GPU/model):', e)"),
+             "    print('Skipping training (model/libs missing):', e)"),
+    ("md", "## 5b. AFTER: generate with the fine-tuned model\n"
+           "Same prompt, now through the LoRA-adapted model. With only a few examples the change "
+           "is modest, but you should see it lean toward the short, single-sentence "
+           "`### Response:` style it was trained on — **that** is fine-tuning changing behavior."),
+    ("code", "after = generate(model, PROMPT)\n"
+             "print('BEFORE:\\n', before, '\\n')\n"
+             "print('AFTER (LoRA fine-tuned):\\n', after)"),
     ("md", "## 6. Save just the adapter (megabytes, not gigabytes)\n"
            "You ship the small adapter and load it on top of the same base model. You can keep "
            "many task adapters for one base model."),
@@ -112,15 +171,23 @@ lora_demo = [
              "except Exception as e:\n"
              "    print('Nothing to save (training did not run):', e)"),
     ("md", "## 7. Takeaways\n"
-           "- LoRA trains a tiny fraction of params and saves a small **adapter**.\n"
-           "- **QLoRA** loads the frozen base in 4-bit so even big models fit one GPU.\n"
+           "- LoRA trains a tiny fraction of params and saves a small **adapter** — and it "
+           "visibly nudged a real model's behavior (BEFORE vs AFTER).\n"
+           "- **QLoRA** (concept) loads the frozen base in 4-bit so even big models fit one GPU "
+           "— same code plus a `quantization_config`, but it needs a CUDA GPU (not CPU/Mac).\n"
            "- Fine-tune only after prompting and RAG fall short.\n"
-           "- Always keep a validation split and watch for **overfitting**."),
+           "- Always keep a **validation split** and watch the **validation loss** for "
+           "**overfitting**."),
 ]
 build_notebook(lora_demo, os.path.join(CODE, "01_lora_finetune_demo.ipynb"))
 
 # ---------------------------------------------------------------- notebook 2
 serving = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A monitored pipeline call printing **latency + token counts**, an **estimated cost**, "
+           "and a live Flask `/chat` endpoint answered by its **test client**.\n\n"
+           "**Time:** ~4 min · **Cost:** free without a key (offline fallback message); a few cents "
+           "with one · **Keys:** none | ANTHROPIC_API_KEY (optional, for real replies)"),
     ("md", "# Week 16 · Notebook 2 — Serving an LLM Pipeline (GenAI Ops Sketch)\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Wrap an LLM call behind a small **API service**, add basic **monitoring** "

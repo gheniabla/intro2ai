@@ -52,13 +52,29 @@ build_notebook(python_review, os.path.join(CODE, "01_python_review.ipynb"))
 
 # ---------------------------------------------------------------- notebook 2
 first_calls = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A side-by-side comparison of how **Claude**, **Gemini**, and a **local Ollama** model "
+           "answer the *same* prompt (e.g. `CLAUDE: A large language model is...`).\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Gemini Flash / Claude Haiku / local Ollama) "
+           "· **Keys:** ANTHROPIC_API_KEY, GEMINI_API_KEY (Ollama needs none)"),
     ("md", "# Week 1 · Notebook 2 — Hello, AI (Your First Calls)\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Send the *same prompt* to three model sources and compare:\n"
            "- **Anthropic Claude** (cloud)\n- **Google Gemini** (cloud)\n- **Ollama** (local)\n\n"
            "> **Keys:** In Colab use the 🔑 *Secrets* panel and `userdata.get('NAME')`. "
            "Locally use environment variables. **Never commit keys.**"),
-    ("md", "## 0. Install SDKs"),
+    ("md", "## 0. Quick check (no key needed)\n"
+           "Run this first — it confirms Python works and tells you which keys are set, "
+           "so you know what to expect from the cells below."),
+    ("code", "import os\n"
+             "PROMPT = 'In two sentences, explain what a large language model is to a new CS student.'\n"
+             "print('Python is running. Your shared prompt is:')\n"
+             "print(' ', PROMPT)\n"
+             "print()\n"
+             "print('Claude key set:', bool(os.environ.get('ANTHROPIC_API_KEY')))\n"
+             "print('Gemini key set:', bool(os.environ.get('GEMINI_API_KEY')))\n"
+             "print('Ollama needs no key (local).')"),
+    ("md", "## 0b. Install SDKs"),
     ("code", "!pip -q install anthropic google-generativeai ollama"),
     ("md", "## 1. Load API keys safely"),
     ("code", "import os\n"
@@ -87,9 +103,13 @@ first_calls = [
              "model = genai.GenerativeModel('gemini-2.5-flash')\n"
              "resp = model.generate_content(PROMPT)\n"
              "print('GEMINI:\\n', resp.text)"),
-    ("md", "## 5. Local model with Ollama\n"
-           "Install Ollama from ollama.com, then in a terminal: `ollama pull llama3.2`.\n"
-           "(In Colab you can instead `!curl -fsSL https://ollama.com/install.sh | sh` and run the server.)"),
+    ("md", "## 5. Local model with Ollama (optional in Colab)\n"
+           "Running a local model is **optional** — Colab has no Ollama server started, so this cell "
+           "will simply report that Ollama isn't running, which is fine for A1.\n\n"
+           "**If running locally:** install Ollama from ollama.com, then in a terminal run "
+           "`ollama pull llama3.2`. **If you want it in Colab anyway:** start a server first with "
+           "`!curl -fsSL https://ollama.com/install.sh | sh`, then in a new cell `!ollama serve &` "
+           "and `!ollama pull llama3.2` before running the cell below."),
     ("code", "import ollama\n"
              "try:\n"
              "    out = ollama.chat(model='llama3.2',\n"
@@ -98,8 +118,9 @@ first_calls = [
              "except Exception as e:\n"
              "    print('Ollama not running locally yet:', e)"),
     ("md", "## 6. Compare\n"
-           "Write 150 words: how did the three answers differ in length, tone, and accuracy? "
-           "Which would you trust for a beginner, and why? (This is your A1 reflection.)"),
+           "Write 150 words: how did the answers differ in length, tone, and accuracy? "
+           "Which would you trust for a beginner, and why? (This is your A1 reflection.) "
+           "Comparing **Claude vs Gemini** is enough; include Ollama only if you ran it locally."),
     ("code", "# notes:\n"),
 ]
 build_notebook(first_calls, os.path.join(CODE, "02_first_ai_calls.ipynb"))

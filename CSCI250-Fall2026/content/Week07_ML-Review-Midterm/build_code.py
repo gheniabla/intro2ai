@@ -130,6 +130,75 @@ review = [
              "    w = w - lr * grad\n"
              "print('converged w ~', round(w, 3), '(target 3.0)')"),
 
+    ("md", "---\n# Worked answers to the Practice Midterm (`02_practice_midterm.ipynb`)\n"
+           "Try every item on your own first. These are the worked answers — **no surprises**: "
+           "every part of the practice midterm has a solution here."),
+
+    ("md", "## Practice Midterm — Part A (multiple choice)\n"
+           "- **A1 = (c) tuple** — tuples are immutable; list/dict/set are mutable.\n"
+           "- **A2 = (c) (2,3)** — `(1,3)` broadcasts with `(2,1)` to `(2,3)`.\n"
+           "- **A3 = (b) estimate generalization** — the test set stands in for unseen data.\n"
+           "- **A4 = (b) overfitting** — high train acc, low test acc = memorized noise.\n"
+           "- **A5 = (c) softmax** — turns scores into a multi-class probability distribution."),
+    ("code", "# Verify A2 (the broadcast shape) and A5 (softmax sums to 1).\n"
+             "a = np.array([[1, 2, 3]]); b = np.array([[10], [20]])\n"
+             "print('A2 shape:', (a + b).shape)            # (2, 3)\n"
+             "def softmax(z):\n"
+             "    e = np.exp(z - z.max()); return e / e.sum()\n"
+             "print('A5 softmax sums to:', round(float(softmax(np.array([2., 1., .1])).sum()), 3))"),
+
+    ("md", "## Practice Midterm — Part B (short answer)\n"
+           "- **B1.** **AI ⊃ ML ⊃ DL ⊃ GenAI**: AI is the broad goal of intelligent behavior; "
+           "ML learns patterns from data; DL is ML with multi-layer neural nets; GenAI is DL that "
+           "*generates* content (text/images/code), e.g. LLMs.\n"
+           "- **B2.** **Regression** predicts a continuous number (metric: MAE or R²); "
+           "**classification** predicts a discrete label (metric: accuracy or F1).\n"
+           "- **B3.** **Precision** = of the items I flagged positive, how many were actually positive. "
+           "**Recall** = of the actual positives, how many did I catch.\n"
+           "- **B4.** Without a **nonlinear** activation, stacked linear layers collapse into a single "
+           "linear layer — no matter how many you stack, you can only draw a straight boundary. "
+           "Nonlinearity (e.g. ReLU) lets the network bend the boundary into any shape.\n"
+           "- **B5.** **Backprop** computes the gradient of the loss w.r.t. every weight (the chain rule, "
+           "in one backward pass); the **optimizer** then nudges each weight in the downhill direction "
+           "(`w ← w − lr·grad`)."),
+
+    ("md", "## Practice Midterm — Part C (read the code: what does it print?)\n"
+           "Predicted outputs below; run the cell to confirm."),
+    ("code", "x = np.arange(6).reshape(2, 3)\n"
+             "print('C1 x.sum(axis=0) ->', x.sum(axis=0).tolist())   # [3, 5, 7]  (down columns)\n"
+             "print('C2 x.sum(axis=1) ->', x.sum(axis=1).tolist())   # [3, 12]    (across rows)\n"
+             "df = pd.DataFrame({'g': ['a', 'a', 'b'], 'v': [1, 3, 10]})\n"
+             "print('C3 groupby mean ->', df.groupby('g')['v'].mean().to_dict())  # {'a': 2.0, 'b': 10.0}\n"
+             "print('C4 f(6) ->', [i*i for i in range(6) if i % 2 == 1])          # [1, 9, 25]"),
+
+    ("md", "## Practice Midterm — Part D (compute by hand, then verify)\n"
+           "**D1.** With `TP=30, FP=20, FN=10, TN=40`: accuracy=(30+40)/100=**0.70**, "
+           "precision=30/(30+20)=**0.60**, recall=30/(30+10)=**0.75**, "
+           "F1=2·0.60·0.75/(0.60+0.75)≈**0.67**.\n\n"
+           "**D2.** For `f(w)=(w-5)²` with `w0=0`, `lr=0.1`: grad=2·(0−5)=**−10**, so the first "
+           "update `w ← 0 − 0.1·(−10) = 1.0` moves **toward** 5 (gradient descent always steps downhill)."),
+    ("code", "# D1\n"
+             "TP, FP, FN, TN = 30, 20, 10, 40\n"
+             "accuracy  = (TP + TN) / (TP + FP + FN + TN)\n"
+             "precision = TP / (TP + FP)\n"
+             "recall    = TP / (TP + FN)\n"
+             "f1 = 2 * precision * recall / (precision + recall)\n"
+             "print(f'D1  accuracy={accuracy:.2f}  precision={precision:.2f} '\n"
+             "      f'recall={recall:.2f}  F1={f1:.2f}')   # 0.70 0.60 0.75 0.67\n\n"
+             "# D2\n"
+             "w, lr = 0.0, 0.1\n"
+             "grad = 2 * (w - 5)\n"
+             "print('D2  first grad =', grad, ' w after one step =', w - lr * grad, '(toward 5)')"),
+
+    ("md", "## Practice Midterm — Part E (concept)\n"
+           "**E1 (model answer).** An LLM is a **very deep neural network** (a Transformer) whose "
+           "behavior is set by billions of **weights** organized into **layers** — the same weights and "
+           "layers from Week 6, just far more of them. It is trained by **gradient descent** + "
+           "**backprop** to **minimize cross-entropy** on next-token prediction, and its final **softmax** "
+           "turns scores over the vocabulary into the probability of each possible next token. Every one "
+           "of those terms is exactly what you built by hand this half of the course — that is why neural "
+           "networks are the foundation under LLMs."),
+
     ("md", "## You're ready\n"
            "If every cell above made sense, you have the Weeks 1–6 core. Now take the "
            "**practice midterm** (`02_practice_midterm.ipynb`) on your own — **no AI** — "

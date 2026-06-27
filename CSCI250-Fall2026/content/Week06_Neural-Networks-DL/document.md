@@ -12,14 +12,14 @@ By the end of this week you will be able to:
 4. Build and train a **tiny neural network** on a simple dataset using PyTorch (with a NumPy fallback).
 5. Take a guided tour of **convolutional networks** (vision) and **sequence models**, and see why this all is **the foundation under LLMs**.
 
-> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks). **No assignment this week** — use the time to absorb deep-learning fundamentals before the Week 7 midterm.
+> **Time budget:** ~10 hours this week (lecture + slides + videos + two notebooks + **Lab A6**). Absorb the deep-learning fundamentals here — they're the foundation under the LLM weeks and fair game on the Week 7 midterm.
 
 ---
 
 ## 1. Why this week is the hinge of the course
 For five weeks we did "classic" machine learning with scikit-learn: linear/logistic regression, k-NN, decision trees. Those models are powerful, but they mostly draw **straight (or simple) decision boundaries** and need you to hand-design features.
 
-**Deep learning** changes the game. A neural network *learns its own features* by stacking simple units into many layers. The same core idea — neurons, layers, activations, a loss, and gradient descent — scales all the way up to the **Large Language Models** (Claude, Gemini, Llama) we spend the rest of the semester using. When you hear "175 billion parameters," those parameters are exactly the **weights** you will meet this week, just *a lot* more of them.
+**Deep learning** changes the game. A neural network *learns its own features* by stacking simple units into many layers. The same core idea — neurons, layers, activations, a loss, and gradient descent — scales all the way up to the **Large Language Models** (Claude, Gemini, Llama) we spend the rest of the semester using. When you hear "billions of parameters," those parameters are exactly the **weights** you will meet this week, just *a lot* more of them.
 
 So: **everything in this week is the foundation under LLMs.** Master the small picture now and the big picture later will make sense.
 
@@ -191,14 +191,20 @@ Every term in those three sentences is something you learned this week. That is 
 
 ---
 
-## 12. Lab / assignment
-**No assignment this week.** Instead:
-1. Run `code/01_tiny_neural_net.ipynb` end-to-end and watch the loss go down.
-2. Change the **learning rate**, **hidden size**, and **epochs**, and note what happens.
-3. Run `code/02_cnn_and_sequence_tour.ipynb` to see a convolution and a tiny sequence model.
-4. Use the saved time to start reviewing Weeks 1–5 for the **Week 7 midterm** (Oct 11).
+## 12. Lab — Assignment A6 (6 pts · due Sunday Oct 4, 11:59 PM PT)
+**Goal:** build, train, and evaluate a **tiny neural network**, watch the **loss go down** as it learns, and connect the pieces (neurons, layers, activations, loss, gradient descent) to the foundation under modern LLMs. Full spec and rubric: `assignments/A6.md`.
 
-*There is no submission this week, but these notebooks are fair game on the midterm.*
+This week's two notebooks map directly to the A6 tasks:
+1. **Train the net (`code/01_tiny_neural_net.ipynb`).** Run the **two-moons** dataset and train the network (Section 2a PyTorch, or the **2b NumPy fallback** if you can't install PyTorch). Report the **final test accuracy**.
+2. **Watch it learn.** Run Section 3 and include the **loss curve**; in 2–3 sentences explain what the falling curve means and what the **learning rate** controls.
+3. **Experiment (Section 4).** Change **one** thing — hidden units, learning rate, or epochs — re-train, and report how test accuracy and the loss curve changed (helped or hurt?).
+4. **Activations matter.** In your own words (2–3 sentences), explain why a network needs a **nonlinear** activation (e.g., ReLU) — what happens if you stack linear layers with no activation?
+5. **Tour & connect (`code/02_cnn_and_sequence_tour.ipynb`).** Skim it and write one sentence on how the **softmax** that picks a class here relates to how an LLM picks the **next token**.
+6. **Stretch:** Run a second experiment (a different knob) and briefly compare which setting generalized best.
+
+**Submit on Canvas:** the completed `01_tiny_neural_net.ipynb` (and your notes from `02_...`) with outputs and the loss curve visible, your final accuracy, loss-curve explanation, experiment result, activation explanation, stretch comparison, and a one-line **AI-Use** note. Correctness-graded — you may revise once after feedback. (If PyTorch won't install, use the NumPy fallback and document any blockers — effort counts.)
+
+These fundamentals are also fair game on the **Week 7 midterm** (Oct 11).
 
 ---
 

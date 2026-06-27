@@ -9,13 +9,20 @@ os.makedirs(CODE, exist_ok=True)
 
 # ---------------------------------------------------------------- notebook 1
 eval_harness = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A printed **scorecard** comparing a `contains` baseline with an **LLM-as-judge**, "
+           "plus a **two-judge comparison** (Claude vs Gemini) on the same answers.\n\n"
+           "**Time:** ~6 min · **Cost:** free (heuristic fallback with no key; a few cents with one) "
+           "· **Keys:** none | ANTHROPIC_API_KEY and/or GEMINI_API_KEY (optional, for real judges)"),
     ("md", "# Week 17 · Notebook 1 — A Small Eval Harness (LLM-as-Judge)\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Build a tiny **eval harness**: test cases + scorers + an aggregate report. "
-           "We score with **exact-match** *and* an **LLM-as-judge** (Claude, with a Gemini "
-           "alternative). **No OpenAI.**\n\n"
+           "We score with **`contains`** (a substring baseline) *and* an **LLM-as-judge** "
+           "(Claude *and* Gemini). We reuse the course's shared **`tools/eval_utils.py`** "
+           "(`llm_judge`, `scorecard`) — the same helper as Weeks 9, 11, 13 — and show the "
+           "from-scratch scorers under the hood. **No OpenAI.**\n\n"
            "> Degrades gracefully: without an API key the judge falls back to a clear "
-           "message, and exact-match still runs offline."),
+           "heuristic, and the `contains` scorer still runs offline."),
     ("md", "## 0. Install + load keys safely"),
     ("code", "!pip -q install anthropic google-generativeai\n"
              "import os\n"
@@ -27,6 +34,40 @@ eval_harness = [
              "    pass  # locally, set these in your shell environment\n"
              "print('Anthropic key set:', bool(os.environ.get('ANTHROPIC_API_KEY')))\n"
              "print('Gemini key set:', bool(os.environ.get('GEMINI_API_KEY')))"),
+    ("md", "## 0b. Import the shared eval helpers\n"
+           "The course ships `tools/eval_utils.py` (`llm_judge`, `scorecard`) used across "
+           "Weeks 9, 11, 13. We search **upward** from the notebook for the top-level `tools/` "
+           "folder so the import works locally and in Colab. We'll use `scorecard` to print the "
+           "report card; later we build a judge from scratch too, so you see what's **under the "
+           "hood** of `llm_judge`."),
+    ("code", "import os, sys\n\n"
+             "def _find_tools_dir(start=None, max_up=6):\n"
+             "    here = os.path.abspath(start or os.getcwd())\n"
+             "    for _ in range(max_up):\n"
+             "        cand = os.path.join(here, 'tools', 'eval_utils.py')\n"
+             "        if os.path.exists(cand):\n"
+             "            return os.path.dirname(cand)\n"
+             "        parent = os.path.dirname(here)\n"
+             "        if parent == here:\n"
+             "            break\n"
+             "        here = parent\n"
+             "    return None\n\n"
+             "tools_dir = _find_tools_dir()\n"
+             "if tools_dir:\n"
+             "    sys.path.insert(0, tools_dir)\n"
+             "    from eval_utils import llm_judge, scorecard\n"
+             "    print('Imported eval_utils from:', tools_dir)\n"
+             "else:\n"
+             "    print('eval_utils.py not found nearby — using a minimal inline fallback.')\n"
+             "    def llm_judge(question, answer, rubric='', provider='gemini'):\n"
+             "        score = 3 if (answer and answer.strip()) else 1\n"
+             "        return {'score': score, 'reason': '(inline heuristic fallback)',\n"
+             "                'judge': 'fallback'}\n"
+             "    def scorecard(rows, score_key='score'):\n"
+             "        n = len(rows) or 1\n"
+             "        avg = sum(float(r.get(score_key, 0) or 0) for r in rows) / n\n"
+             "        print('SCORECARD', len(rows), 'cases  | avg', round(avg, 2))\n"
+             "        return {'n': len(rows), 'avg': avg}"),
     ("md", "## 1. The system under test\n"
            "Any function `input -> output` works. We use Claude, but you would plug in your "
            "Final Project pipeline (RAG, agent, fine-tuned model, ...)."),
@@ -53,9 +94,11 @@ eval_harness = [
              "    {'input': 'Who wrote Romeo and Juliet?',    'expected': 'Shakespeare'},\n"
              "]\n"
              "print(len(test_cases), 'test cases')"),
-    ("md", "## 3. Scorer A — exact-match / contains\n"
-           "Objective and free. Good for single-answer tasks; brittle for free-form text "
-           "('Paris.' vs 'The capital is Paris')."),
+    ("md", "## 3. Scorer A — `contains` (substring match)\n"
+           "Objective and free. This is **substring containment**, *not* strict exact-match — "
+           "we call it `contains` to be precise (strict exact-match would compare the whole "
+           "normalized strings; `eval_utils.exact_match` does that). Good for single-answer "
+           "tasks; brittle for free-form text ('Paris.' vs 'The capital is Paris')."),
     ("code", "def contains_score(answer: str, expected: str) -> float:\n"
              "    return 1.0 if expected.lower() in answer.lower() else 0.0\n\n"
              "print(contains_score('The capital is Paris.', 'Paris'))  # 1.0\n"
@@ -90,7 +133,9 @@ eval_harness = [
              "        model = genai.GenerativeModel('gemini-2.5-flash')\n"
              "        prompt = (f'Reference: {expected}\\nAnswer: {answer}\\n'\n"
              "                  'Reply ONLY 1 if the answer is correct, else 0.')\n"
-             "        out = model.generate_content(prompt).text\n"
+             "        out = model.generate_content(\n"
+             "            prompt,\n"
+             "            generation_config={'temperature': 0, 'max_output_tokens': 5}).text\n"
              "        return 1.0 if '1' in out else 0.0\n"
              "    except Exception as e:\n"
              "        print('   (gemini judge offline:', e, ')')\n"
@@ -109,21 +154,34 @@ eval_harness = [
              "    avg = sum(scores) / len(scores) if scores else float('nan')\n"
              "    return avg, rows\n\n"
              "avg, rows = run_eval(system_under_test, contains_score)\n"
-             "print(f'\\nExact-match average: {avg:.2f}\\n')\n"
+             "print(f'\\ncontains average: {avg:.2f}\\n')\n"
              "for q, a, exp, s in rows:\n"
-             "    print(f'  [{s}] Q: {q}\\n       A: {a}\\n       expected ~ {exp}\\n')"),
-    ("md", "## 6. Run the LLM-as-judge eval\n"
-           "Re-run with the judge scorer. Compare its average to exact-match — the judge "
-           "often credits correct-but-differently-worded answers."),
-    ("code", "judge_avg, judge_rows = run_eval(system_under_test,\n"
-             "                                 lambda a, e: judge_score(a, e))\n"
-             "print(f'LLM-judge average: {judge_avg:.2f}')"),
+             "    print(f'  [{s}] Q: {q}\\n       A: {a}\\n       expected ~ {exp}\\n')\n\n"
+             "# Same data through the shared scorecard helper from eval_utils.\n"
+             "scorecard([{'q': q, 'score': s} for q, a, exp, s in rows])"),
+    ("md", "## 6. Run TWO LLM judges and compare (watch for self-preference bias)\n"
+           "Re-run with **both** judges — Claude (`claude-sonnet-4-6`) and Gemini "
+           "(`gemini-2.5-flash`) — on the same answers and compare their averages. The system "
+           "under test is `claude-haiku-4-5`, so the Claude judge is **same-family**: LLM judges "
+           "show a measurable **self-preference bias**, tending to rate answers from their own "
+           "model family more favorably, so a **cross-family** judge (here, Gemini) or human "
+           "spot-checks are a useful sanity check. Both judges are wired up (no dead code)."),
+    ("code", "claude_avg, _ = run_eval(system_under_test, lambda a, e: judge_score(a, e))\n"
+             "gemini_avg, _ = run_eval(system_under_test, lambda a, e: gemini_judge(a, e))\n"
+             "print(f'Claude judge (same family as SUT): {claude_avg:.2f}')\n"
+             "print(f'Gemini judge (cross family)      : {gemini_avg:.2f}')\n"
+             "if claude_avg == claude_avg and gemini_avg == gemini_avg:\n"
+             "    print(f'gap (claude - gemini): {claude_avg - gemini_avg:+.2f}  '\n"
+             "          '(a positive gap can hint at same-family self-preference)')\n"
+             "else:\n"
+             "    print('(set ANTHROPIC_API_KEY and GEMINI_API_KEY to compare real judges)')\n"
+             "judge_avg = claude_avg  # keep the Claude judge for the record below"),
     ("md", "## 7. Track it over time\n"
            "Save the score with a label (model + prompt version). Re-run after every change "
            "to prove an improvement — and to justify a cheaper model."),
     ("code", "import datetime\n"
              "record = {'when': datetime.datetime.now().isoformat(timespec='minutes'),\n"
-             "          'model': MODEL, 'exact_match': round(avg, 3),\n"
+             "          'model': MODEL, 'contains': round(avg, 3),\n"
              "          'judge': None if judge_avg != judge_avg else round(judge_avg, 3)}\n"
              "print('eval record:', record)\n"
              "# Append records to a CSV/JSON in your repo to chart quality over versions."),

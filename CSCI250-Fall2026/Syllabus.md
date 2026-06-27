@@ -17,7 +17,7 @@ Introduction to Artificial Intelligence
 **Code Samples:** You need to finish testing and practicing the sample codes by the end of the week.
 **Lecture Videos:** You need to finish watching the videos by the end of the week.
 **Reading Lists:** You need to finish the reading materials by the end of the week. The specific lists will be posted each week.
-**Project Assignments:** You need to submit on Sunday nights 11:59PM. You will have two weeks for any assignment (Assignment 1 and Final are exception). Some of the assignments will be graded for the correctness. Some other Assignments are graded for the effort, but not necessarily for correctness (You will get grades even if you didn’t produce the correct result, but you need to show you made significant effort to get the correct result).
+**Project Assignments:** There are 10 assignments (A1–A10), each due **Sunday 11:59 PM PST** of its assigned week (see the Class Schedule). Some assignments are graded for correctness; others are graded for documented effort — you can earn credit for significant, shown effort even if the result isn't fully correct. Correctness-graded assignments may be revised once.
 
 ## Office Hours & Meeting Time
 Although this course is “Asynchronous Online” course, we will have office hours in the following times:
@@ -43,7 +43,7 @@ All relevant instructional materials and assignments will be distributed via thi
 - **Proactive check-ins:** if I see you slipping, I’ll reach out early — please reach back. I’d much rather help than drop you.
 - **Mid-semester pulse survey:** around Week 8 I’ll ask (anonymously) about clarity, workload, and pacing — and then tell you what I changed in response.
 
-**New students: read [Start-Here.md] first**, and keep the **[Free-Tier-Playbook.md]** handy so cost and API keys are never a barrier ($0 course).
+**New students: read [Start-Here.md](Start-Here.md) first**, and keep the **[Free-Tier-Playbook.md](Free-Tier-Playbook.md)** handy so cost and API keys are never a barrier ($0 course).
 
 ## Prerequisite/Recommended Preparation:
 Minimum grade of ‘C’ in CSCI114.
@@ -102,12 +102,12 @@ There are **10 graded assignments** (A1–A10), each worth **6 points**, **due S
 
 (Please note: I reserve the right to slightly adjust the weights of individual components if necessary.)
 
-**Rubrics, exemplars & revisions.** Every graded item has a clear **rubric** and an **exemplar** ("what an A looks like") — see **[Rubrics.md]**. **Skills checks (S#) use pass/revise grading: if you don't pass the first time, you may revise once (no penalty)** — the goal is mastery, not one-shot perfection. Each weekly assignment lists a realistic **time estimate**, and every week includes ungraded **self-checks** so you can gauge your understanding before graded work counts. The Midterm and Final scope and rubrics are published in Week 1 — no surprise assessments.
+**Rubrics, exemplars & revisions.** Every graded item has a clear **rubric** and an **exemplar** ("what an A looks like") — see **[Rubrics.md](Rubrics.md)**. **Assignments graded for correctness may be revised once (no penalty)** if you don't pass the first time — the goal is mastery, not one-shot perfection. Each weekly assignment lists a realistic **time estimate**, and every week includes ungraded **self-checks** so you can gauge your understanding before graded work counts. The Midterm and Final scope and rubrics are published in Week 1 — no surprise assessments.
 
 ## Textbooks:
 - Aurélien Géron, *Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems*. 2nd edition. O’Reilly, 2019. ISBN-13: 978-1492032649. **(Recommended)**
 - Thomas R. Caldwell, *The AI Engineering Bible*. ASIN: B0F4KZJN6Z. **(Recommended)**
-- Vijay Janapa Reddi, *Machine Learning Systems*. **(Required)** — Free online: https://www.mlsysbook.ai/
+- Vijay Janapa Reddi, *Machine Learning Systems*. **(Required — free online)**: https://www.mlsysbook.ai/
 
 ## Exams:
 This course will have one midterm exam – **Midterm:**
@@ -117,7 +117,7 @@ This course will have one midterm exam – **Midterm:**
 Please note: There will be no make-up exam and the schedule can’t be changed for any reason. Please make plans accordingly. In the case of an unplanned emergency, your other scores will be prorated.
 
 ## Final Project — "My Assistant" (build it across the term):
-This course has one final project that you **build incrementally from Week 8 on** — not a last-minute scramble. You'll create your own AI application ("My Assistant") and upgrade it weekly (chatbot → answers from your own documents → tool-using agent → optional multimodal), then polish, evaluate, and deploy it for finals. Choose a track (RAG assistant / tool-using agent / multimodal app / fine-tuned specialist). Full spec, milestones (M1–M5), and the 100-point rubric are in **[Final-Project-Capstone.md]** and published in Week 1 — no surprises.
+This course has one final project that you **build incrementally from Week 8 on** — not a last-minute scramble. You'll create your own AI application ("My Assistant") and upgrade it weekly (chatbot → answers from your own documents → tool-using agent → optional multimodal), then polish, evaluate, and deploy it for finals. Choose a track (RAG assistant / tool-using agent / multimodal app / fine-tuned specialist). Full spec, milestones (M1–M5), and the 100-point rubric are in **[Final-Project-Capstone.md](Final-Project-Capstone.md)** and published in Week 1 — no surprises.
 - Presentation times: Will be announced by **November 30th, 2026**
 - Submission: **11:59PM, Dec 19th, 2026**
 
@@ -131,7 +131,7 @@ Labs and Assignments are required to be submitted by deadlines. Total 10 hours o
 Late submissions will not be accepted.
 
 ## Drop Policy:
-A student will be dropped if the student fails to submit three consecutive skills and/or assignments on time.
+A student will be dropped if the student fails to submit three consecutive assignments on time.
 
 ## Academic Integrity & Responsible Use of AI:
 Palomar College does not tolerate cheating. You are responsible for ensuring the academic integrity of all work presented. Violation of this requirement may result in a grade of F for the work and/or your final grade. PLEASE DO NOT PLAGIARIZE. Copying and pasting from the Internet or your colleagues violates Palomar College’s integrity policy and will result in a grade of F.

@@ -66,7 +66,10 @@ ml_workflow = [
              "print(f'test  accuracy: {clf.score(X_test,  y_test):.3f}  (what we report)')"),
     ("md", "## 7. Predict on new data\n"
            "Hand the trained model a brand-new flower measurement."),
-    ("code", "new_flower = [[5.1, 3.5, 1.4, 0.2]]       # sepal/petal length & width\n"
+    ("code", "# Build the new sample as a DataFrame with the SAME column names the model\n"
+             "# was fit on — this avoids sklearn's 'feature names' warning.\n"
+             "new_flower = pd.DataFrame([[5.1, 3.5, 1.4, 0.2]],\n"
+             "                          columns=iris.feature_names)  # sepal/petal length & width\n"
              "pred = clf.predict(new_flower)[0]\n"
              "print('predicted species:', iris.target_names[pred])"),
     ("md", "## 8. Iterate\n"

@@ -49,7 +49,7 @@ Reference answer: {reference}
 Model answer: {answer}
 Reply with ONLY a number 1-5."""
 score = client.messages.create(
-    model="claude-sonnet-4-6", max_tokens=10,
+    model="claude-sonnet-4-6", max_tokens=10, temperature=0,  # low temp = repeatable scores
     messages=[{"role": "user", "content": judge_prompt}],
 ).content[0].text
 ```
@@ -110,17 +110,19 @@ You went from Python review → data & ML → neural nets → LLMs, prompting, R
 
 ---
 
-## 7. Final Project — logistics (due **Friday, Dec 19, 11:59 PM PT**)
-Your capstone applies the semester's stack to a problem you care about.
+## 7. Final Project — logistics (Capstone **M5**, due **Friday, Dec 19, 11:59 PM PST**)
+Your capstone applies the semester's stack to a problem you care about. **M5 is the finish line:** "My Assistant" becomes a polished, **deployed, documented** product. See `capstone/M5.md` for the full checklist and rubric.
+
+> **🎯 Capstone M5 — ship it + present (see capstone/M5.md).** Deploy a public demo, write the README (banner, setup, scorecard, model reflection, limitations, AI-Use note), and record a **3-minute** screencast — due **Dec 19, 11:59 PM PST**.
 
 **Deliverables**
-1. **Working notebook/app** — a runnable GenAI pipeline (prompting, RAG, an agent, fine-tuning, or multimodal — your choice). Keys via Secrets/env; **never hard-coded**.
-2. **Eval results** — run your small eval harness from this week and report the score(s).
-3. **Short write-up (1–2 pages)** — problem, approach, what worked, limits, and a **safety note** (which of §4's risks apply and how you handled them).
-4. **Presentation** — a 5-minute recorded demo (screen + voice) or slide walkthrough posted to Canvas.
-5. **AI-Use note** — what AI tools you used and how (required, as all semester).
+1. **Deployed public demo** — a **Gradio app on Hugging Face Spaces** *or* a clearly-documented **Colab notebook** a grader can open and run **first try** on a **free tier** (no OpenAI). Keys via Secrets/env; **never hard-coded**.
+2. **GitHub repo + README** — including a **"What you'll see when you run this"** banner, setup/run steps, your **eval scorecard** (baseline vs. final from M3/M4), a **Compare-models reflection** (Claude / Gemini / Ollama, with evidence), an honest **Limitations** section, and an **AI-Use note**.
+3. **Eval results** — run your small eval harness from this week and report **baseline vs. final** score(s).
+4. **Safety note** — which of §4's risks apply (hallucination, bias, prompt injection, privacy/IP) and how you handled them.
+5. **3-minute screencast** — walk through the app and **one thing you'd improve**.
 
-**Tips:** scope small and finish; ground with RAG to fight hallucination; include 5–10 eval cases; rehearse the demo once.
+**Tips:** test the **first-try** experience in a fresh session; scope small and finish; ground with RAG to fight hallucination; include 5–10 eval cases; don't skip limitations; keep the screencast to **3 minutes**.
 
 *No new assignment beyond the Final Project. Congratulations on finishing CSCI 250!*
 

@@ -210,8 +210,8 @@ With embeddings + a vector store + a chat model you already have the skeleton of
 
 ```python
 question = "What does ChromaDB do?"
-context = "\n".join(store.similarity_search(question, k=3)[0:3] and
-                    [d.page_content for d in store.similarity_search(question, k=3)])
+hits = store.similarity_search(question, k=3)
+context = "\n".join(d.page_content for d in hits)
 prompt = f"Answer using ONLY this context:\n{context}\n\nQuestion: {question}"
 print(claude.invoke(prompt).content)
 ```

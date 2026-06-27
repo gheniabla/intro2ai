@@ -26,6 +26,7 @@ You may use AI assistants heavily (this is an AI course), but **you own and must
 | Item | Detail |
 |---|---|
 | **Proposal (Capstone M1)** | Done in **Week 9** |
+| **Core build (Capstone M2)** | Done in **Week 11** — due **Nov 8** |
 | **This week (Capstone M3)** | **Evaluation harness** — due **end of Week 14** |
 | **Project arc** | Built across the Capstone milestones M1–M5 (Weeks 9–17) |
 | **Final submission** | Due **December 19, 2026, 11:59 PM PT** |
@@ -35,22 +36,19 @@ You may use AI assistants heavily (this is an AI course), but **you own and must
 ---
 
 ## 2. Choose a track
-Pick **one** of the five tracks below. Each maps directly to weeks you have already completed (or are about to), so you are not starting from zero.
+Pick **one** of the **four** canonical tracks below (the same four defined in `Final-Project-Capstone.md`). Each maps directly to weeks you have already completed (or are about to), so you are not starting from zero. Claude Code (Week 12) is a **tool you use to build any track**, not a track of its own.
 
-### Track A — RAG application *(builds on Weeks 10–11)*
-A question-answering app **grounded in a document set you choose** (course PDFs, a hobby wiki, product manuals, research papers). Chunk → embed → store in a vector DB (ChromaDB) → retrieve → answer with **Claude** or **Gemini**, with citations back to the source.
+### Track A — RAG Assistant *(builds on Weeks 10–11)*
+A domain expert **grounded in a corpus you choose** (course PDFs, a hobby wiki, product manuals, research papers). Chunk → embed → store in a vector DB (ChromaDB) → retrieve → answer with **Claude** or **Gemini**, with citations back to the source. Must do retrieval + grounding + an **evaluation of answer quality**.
 
-### Track B — Agent / tool-using assistant *(builds on Week 13)*
-An agent that **calls tools** to accomplish a goal: e.g., a research assistant that searches + summarizes, a "data analyst" that runs Python on a dataset, or a task bot exposed over **MCP** or a small **Flask** API. Must show a real **agent loop** (model decides → calls tool → observes → continues).
+### Track B — Tool-Using Agent *(builds on Week 13)*
+A reason→act→observe agent that **calls 2+ tools** to complete multi-step tasks, **with a safety guardrail**: e.g., a research assistant that searches + summarizes, a "data analyst" that runs Python on a dataset, or a task bot exposed over **MCP** or a small **Flask** API. Must show a real **agent loop** (model decides → calls tool → observes → continues).
 
-### Track C — AI-assisted coding tool *(builds on Week 12)*
-A developer tool you **build with Claude Code** and that itself uses an LLM: e.g., a code reviewer, a docstring/test generator, a commit-message writer, or a "explain this repo" CLI. Deliver a **tested** feature and document how AI helped you write it.
+### Track C — Multimodal App *(builds on Week 15 — next week)*
+An app that accepts **image/audio input** (and text): e.g., a receipt/invoice extractor, a chart-reading assistant, an accessibility "describe this photo" tool, or a homework-helper that reads a photographed problem. Uses **Claude** or **Gemini** vision and produces structured output.
 
-### Track D — Multimodal application *(builds on Week 15 — next week)*
-An app that understands **images + text** (and optionally audio): e.g., a receipt/invoice extractor, a chart-reading assistant, an accessibility "describe this photo" tool, or a homework-helper that reads a photographed problem. Uses **Claude** or **Gemini** vision.
-
-### Track E — Fine-tuning / evaluation study *(builds on Weeks 16–17)*
-A **study**, not just an app. Either (1) fine-tune / PEFT-LoRA a small open model on a focused task and compare to a prompted baseline, **or** (2) build an **evaluation harness** (metrics + LLM-as-judge) that rigorously compares 2–3 models/prompts on a task. Deliverable is a **report with evidence**, plots, and an honest discussion of limits.
+### Track D — Fine-Tuned Specialist *(builds on Weeks 16–17)*
+A small **open model fine-tuned** (PEFT/LoRA) for a narrow task, with a **before/after** evaluation against a prompted baseline, pushed to the **Hugging Face Hub**. Deliverable includes a **report with evidence**, plots, and an honest discussion of limits.
 
 ---
 
@@ -102,16 +100,16 @@ Use these as starting points — **narrow them down**, don't copy them wholesale
 
 2. **"Dataset Detective" (Track B — Agent).** An agent with two tools — `run_python(code)` and `describe_column(name)` — that takes a CSV and a plain-English question ("which region grew fastest?"), writes + runs pandas code in a loop, and returns an answer with a chart. Serve it behind a tiny **Flask** endpoint.
 
-3. **"Receipt Reader" (Track D — Multimodal).** Upload a photo of a receipt or an invoice; use **Gemini / Claude vision** to extract vendor, date, line items, and total into clean JSON; flag low-confidence fields. Test on 10 sample images and report accuracy.
+3. **"Receipt Reader" (Track C — Multimodal).** Upload a photo of a receipt or an invoice; use **Gemini / Claude vision** to extract vendor, date, line items, and total into clean JSON; flag low-confidence fields. Test on 10 sample images and report accuracy.
 
-4. **"Model Judge" (Track E — Evaluation).** Pick a task (e.g., summarizing news blurbs). Build an eval harness that runs **Claude vs. Gemini vs. a local Ollama model**, scores each with an **LLM-as-judge** rubric plus one automatic metric (e.g., ROUGE), and produces a leaderboard + plots. Discuss where the judge itself is unreliable.
+4. **"Style Specialist" (Track D — Fine-Tuned).** Fine-tune (PEFT/LoRA) a small open model to write in a specific style/format (e.g., terse commit messages or structured release notes). Capture a prompted **baseline** first, then judge **before vs. after** with a Gemini/Claude rubric, and push the adapter to the **Hugging Face Hub**.
 
 ---
 
 ## 7. Reading & videos
 - **Capstone Milestone M3 handout** (`capstone/M3.md`) and the **rubric above** (Canvas) — required.
 - Re-skim your notes from the track week you chose (10/11 RAG, 12 Claude Code, 13 Agents/MCP).
-- *A Practical Guide to Building Agents* and the *Compact Guide to LLMs* (Canvas resources) — for Tracks B and A/E.
+- *A Practical Guide to Building Agents* and the *Compact Guide to LLMs* (Canvas resources) — for Tracks B and A/D.
 - Optional: browse past student demos (Canvas) for scope calibration.
 
 ---

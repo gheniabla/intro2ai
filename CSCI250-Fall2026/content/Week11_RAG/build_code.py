@@ -26,6 +26,13 @@ KB_BUILDER = (
 
 # ---------------------------------------------------------------- notebook 1
 rag_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A grounded answer to *\"How is the final project weighted and when is it due?\"* "
+           "with **[1]/[2] citations** pointing back to the exact handbook chunks.\n\n"
+           "**Time:** ~12 min · **Cost:** free (local HF embeddings; cheapest generator: "
+           "Gemini Flash / Claude Haiku) · **Keys:** none for retrieval — add "
+           "`ANTHROPIC_API_KEY` or `GEMINI_API_KEY` for the generation cells."),
+
     ("md", "# Week 11 · Notebook 1 — A Working RAG Pipeline\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Build the full pipeline over a tiny document set:\n"
@@ -154,6 +161,12 @@ build_notebook(rag_nb, os.path.join(CODE, "01_rag_pipeline.ipynb"))
 
 # ---------------------------------------------------------------- notebook 2
 exp_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- The **same question** retrieved under different chunk sizes/overlap/k, plus an "
+           "out-of-scope question correctly flagged **\"I don't know (out of scope)\"**.\n\n"
+           "**Time:** ~10 min · **Cost:** free (local HF embeddings, retrieval-only) "
+           "· **Keys:** none required."),
+
     ("md", "# Week 11 · Notebook 2 — RAG Experiments\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Build intuition: change **chunk_size**, **chunk_overlap**, and **k**, watch "
@@ -327,11 +340,47 @@ eval_nb = [
 
     ("md", "## 4. A RAG function we can re-configure\n"
            "Index the handbook with a given `chunk_size`/`overlap`, retrieve top-k, and answer. "
-           "We keep generation simple and **offline-friendly**: the \"answer\" stitches the "
-           "retrieved chunks together. (Swap in `answer_with_claude`/`answer_with_gemini` from "
-           "Notebook 1 to evaluate a real generator the same way.)"),
+           "When a key is present we generate a **real** grounded answer with "
+           "`answer_with_claude`/`answer_with_gemini` (same functions as Notebook 1) so the "
+           "**Groundedness** metric actually measures the generator. With **no key** we fall back "
+           "to stitching the retrieved chunks together so the notebook still runs offline — but "
+           "note that fallback is grounded *by construction*, which is exactly why the triad looks "
+           "flat without a key."),
     ("code", "import chromadb\n"
              "from langchain_text_splitters import RecursiveCharacterTextSplitter\n\n"
+             "HAVE_CLAUDE = bool(os.environ.get('ANTHROPIC_API_KEY'))\n"
+             "HAVE_GEMINI = bool(os.environ.get('GEMINI_API_KEY'))\n\n"
+             "# Same grounded generators as Notebook 1 — answer ONLY from retrieved context.\n"
+             "def _ground_prompt(question, retrieved):\n"
+             "    context = '\\n\\n'.join(f'[{i+1}] {c}' for i, c in enumerate(retrieved))\n"
+             "    return (\n"
+             "        'Answer the question using ONLY the context below.\\n'\n"
+             "        'If the answer is not in the context, say '\n"
+             "        '\"I don\\'t know based on the provided documents.\"\\n'\n"
+             "        'Cite the sources you used by their [number].\\n\\n'\n"
+             "        f'Context:\\n{context}\\n\\nQuestion: {question}\\nAnswer:'\n"
+             "    )\n\n"
+             "def answer_with_claude(prompt):\n"
+             "    import anthropic\n"
+             "    msg = anthropic.Anthropic().messages.create(\n"
+             "        model='claude-haiku-4-5-20251001', max_tokens=400,\n"
+             "        messages=[{'role': 'user', 'content': prompt}])\n"
+             "    return msg.content[0].text\n\n"
+             "def answer_with_gemini(prompt):\n"
+             "    import google.generativeai as genai\n"
+             "    genai.configure(api_key=os.environ['GEMINI_API_KEY'])\n"
+             "    return genai.GenerativeModel('gemini-2.5-flash').generate_content(prompt).text\n\n"
+             "def generate(question, retrieved):\n"
+             "    \"\"\"Real grounded generation when a key exists; offline join otherwise.\"\"\"\n"
+             "    prompt = _ground_prompt(question, retrieved)\n"
+             "    try:\n"
+             "        if HAVE_CLAUDE:\n"
+             "            return answer_with_claude(prompt)\n"
+             "        if HAVE_GEMINI:\n"
+             "            return answer_with_gemini(prompt)\n"
+             "    except Exception as e:\n"
+             "        print('[generator fell back to offline join:', e, ']')\n"
+             "    return ' '.join(retrieved)   # offline fallback (grounded by construction)\n\n"
              "client = chromadb.Client()\n"
              "_n = {'i': 0}\n\n"
              "def build_rag(chunk_size, chunk_overlap):\n"
@@ -346,7 +395,7 @@ eval_nb = [
              "        res = col.query(query_texts=[question],\n"
              "                        n_results=min(k, len(chunks)))\n"
              "        retrieved = res['documents'][0]\n"
-             "        answer = ' '.join(retrieved)   # naive 'generator' for an offline demo\n"
+             "        answer = generate(question, retrieved)\n"
              "        return {'question': question, 'context': retrieved, 'answer': answer}\n"
              "    return rag"),
 

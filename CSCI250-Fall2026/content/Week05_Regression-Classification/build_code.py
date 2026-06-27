@@ -110,20 +110,25 @@ classification = [
              "    print(name, '-> accuracy', round(m.score(X_test, y_test), 3))"),
     ("md", "## 3. Why accuracy isn't enough\n"
            "With 80/20 classes, even a lazy model scores ~0.8. **Precision/recall/F1** tell the real story. "
-           "`classification_report` prints all three per class."),
+           "`classification_report` prints all three per class. Print it for **all three** models so you "
+           "can compare them by **F1** (don't prejudge a winner)."),
     ("code", "from sklearn.metrics import classification_report, confusion_matrix\n\n"
-             "best = models['logreg']\n"
-             "preds = best.predict(X_test)\n"
-             "print(classification_report(y_test, preds, digits=3))"),
+             "for name, m in models.items():\n"
+             "    print('=' * 56)\n"
+             "    print(name.strip(), 'classification report')\n"
+             "    print(classification_report(y_test, m.predict(X_test), digits=3))"),
     ("md", "## 4. The confusion matrix\n"
            "Rows = actual, columns = predicted. The off-diagonal cells are exactly your mistakes "
-           "(false positives and false negatives)."),
+           "(false positives and false negatives). We show one model below — swap `clf` for any of "
+           "the three and re-run to compare their mistakes."),
     ("code", "import matplotlib.pyplot as plt\n"
              "from sklearn.metrics import ConfusionMatrixDisplay\n\n"
+             "clf = models['logreg']      # pick any model to inspect — not a prejudged 'best'\n"
+             "preds = clf.predict(X_test)\n"
              "cm = confusion_matrix(y_test, preds)\n"
              "print(cm)\n"
              "ConfusionMatrixDisplay(cm, display_labels=[0, 1]).plot(cmap='Blues')\n"
-             "plt.title('Logistic regression — confusion matrix'); plt.show()"),
+             "plt.title('Confusion matrix (logistic regression)'); plt.show()"),
     ("md", "## 5. Overfitting study: decision-tree depth\n"
            "A deeper tree fits training data better — until it starts **memorizing noise**. Watch the "
            "**train↔test gap** open up. That gap is the signature of overfitting."),

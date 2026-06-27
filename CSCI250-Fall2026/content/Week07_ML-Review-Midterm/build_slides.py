@@ -17,7 +17,7 @@ slides = [
     {"type": "section", "title": "Midterm Logistics"},
     {"type": "bullets", "title": "Know Before You Start", "bullets": [
         "Date: Saturday, October 11, 2026 — 5:30 to 11:59 PM Pacific (Canvas)",
-        "Coverage: Weeks 1–6 (Python → NumPy → Pandas → ML → NN foundations)",
+        "Coverage: Weeks 1–6 (reviewed in Week 7) — Python → NumPy → Pandas → ML → NN",
         "Format: multiple-choice, short-answer, read-the-code, brief concepts",
         ("AI-restricted — treat it like a proctored, closed-AI exam", 1),
         ("Practice midterm mirrors the format — take it AI-free first", 1)]},

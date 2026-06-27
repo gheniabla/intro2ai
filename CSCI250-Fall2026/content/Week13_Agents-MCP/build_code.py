@@ -11,6 +11,13 @@ os.makedirs(CODE, exist_ok=True)
 
 # ============================================================ NOTEBOOK 1
 agents = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- An agent answer *\"12 + 30 = 42, and a coffee is $4\"* with a printed "
+           "**[tool] add(...) -> 42** trace showing the reason→act→observe loop.\n\n"
+           "**Time:** ~10 min · **Cost:** free (cheapest model: Claude Haiku / Gemini Flash) "
+           "· **Keys:** none required (a rule-based fallback agent runs the same loop) — add "
+           "`ANTHROPIC_API_KEY` or `GEMINI_API_KEY` for a real model."),
+
     ("md", "# Week 13 · Notebook 1 — Agents & Tool Calling\n"
            "**CSCI 250 — Introduction to Artificial Intelligence · Fall 2026**\n\n"
            "Build the **agent loop** (reason → act → observe) with **Claude** (explicit "
@@ -131,6 +138,14 @@ build_notebook(agents, os.path.join(CODE, "01_agents_tool_calling.ipynb"))
 
 # ============================================================ NOTEBOOK 2
 flask_nb = [
+    ("md", "## ▶ What you'll see when you run this\n"
+           "- A POST to `/ask` with *\"12 + 30, and the price of coffee?\"* returning a JSON "
+           "answer that **combines both tools** — `add=42, get_price=4` — served by the same "
+           "agent code as `agent_app.py`.\n\n"
+           "**Time:** ~8 min · **Cost:** free (in-process Flask test client) · **Keys:** none "
+           "required (reuses the fallback agent) — set `ANTHROPIC_API_KEY` to serve the real "
+           "Claude loop."),
+
     ("md", "# Week 13 · Notebook 2 — Serving an Agent with Flask\n"
            "**CSCI 250 · Fall 2026**\n\n"
            "Put the agent loop behind an HTTP endpoint so others can use it. The same "
@@ -138,24 +153,38 @@ flask_nb = [
            "> Colab can't easily hold a long-running server, so here we **test the "
            "Flask app in-process** with its test client — no network, no key needed."),
     ("md", "## 1. The app factory\n"
-           "`run_agent` is pluggable: use the real Claude loop if a key is present, "
-           "else the fallback. The route just passes the message through."),
-    ("code", "import os\n"
+           "`run_agent` is pluggable. We **reuse the real agent from `agent_app.py`** — "
+           "`run_claude_agent` (when `ANTHROPIC_API_KEY` is set) or `run_fallback_agent` "
+           "(no key) — both of which already handle **add + get_price**. So the documented "
+           "curl (`12 + 30, and the price of coffee?`) works end-to-end here too."),
+    ("code", "import os, sys\n"
              "from flask import Flask, request, jsonify\n\n"
+             "# Make agent_app.py importable: it sits next to this notebook in code/.\n"
+             "for p in ('.', 'code', '../code', '../../code'):\n"
+             "    if os.path.exists(os.path.join(p, 'agent_app.py')):\n"
+             "        sys.path.insert(0, os.path.abspath(p)); break\n\n"
+             "try:\n"
+             "    from agent_app import run_claude_agent, run_fallback_agent\n"
+             "    print('Reusing run_claude_agent / run_fallback_agent from agent_app.py')\n"
+             "except Exception as e:\n"
+             "    # Inline fallback so the notebook still runs if agent_app.py isn't on the path.\n"
+             "    print('agent_app.py not found, using inline fallback:', e)\n"
+             "    import re\n"
+             "    _TOOLS = {'add': lambda a, b: a + b,\n"
+             "              'get_price': lambda item: {'coffee': 4, 'tea': 3, 'cocoa': 5}\n"
+             "                          .get(str(item).lower(), 0)}\n"
+             "    def run_fallback_agent(user_msg, max_turns=5):\n"
+             "        calls = []\n"
+             "        m = re.search(r'(\\d+)\\s*\\+\\s*(\\d+)', user_msg)\n"
+             "        if m: calls.append(('add', (int(m.group(1)), int(m.group(2)))))\n"
+             "        for item in ('coffee', 'tea', 'cocoa'):\n"
+             "            if item in user_msg.lower(): calls.append(('get_price', (item,)))\n"
+             "        obs = [f'{n}={_TOOLS[n](*a)}' for n, a in calls[:max_turns]]\n"
+             "        return '(fallback) ' + (', '.join(obs) if obs else 'no tool matched')\n"
+             "    run_claude_agent = run_fallback_agent\n\n"
              "def make_agent():\n"
-             "    \"\"\"Return a run_agent(message)->str, real or fallback.\"\"\"\n"
-             "    if os.environ.get('ANTHROPIC_API_KEY'):\n"
-             "        # from Notebook 1 you'd import run_claude_agent; inline stub here:\n"
-             "        def run_agent(message):\n"
-             "            return 'TODO: wire to run_claude_agent(message)'\n"
-             "    else:\n"
-             "        def run_agent(message):\n"
-             "            total = 0\n"
-             "            import re\n"
-             "            m = re.search(r'(\\d+)\\s*\\+\\s*(\\d+)', message)\n"
-             "            if m: total = int(m.group(1)) + int(m.group(2))\n"
-             "            return f'(fallback) sum={total}'\n"
-             "    return run_agent\n\n"
+             "    \"\"\"Return a run_agent(message)->str: real Claude loop or fallback.\"\"\"\n"
+             "    return run_claude_agent if os.environ.get('ANTHROPIC_API_KEY') else run_fallback_agent\n\n"
              "def create_app():\n"
              "    app = Flask(__name__)\n"
              "    run_agent = make_agent()\n"
@@ -168,11 +197,13 @@ flask_nb = [
              "        return jsonify({'ok': True})\n"
              "    return app"),
     ("md", "## 2. Test it in-process (no server, no key)\n"
-           "Flask's test client lets us POST to `/ask` without starting a real server."),
+           "Flask's test client lets us POST to `/ask` without starting a real server. "
+           "The request mirrors the documented curl, so the answer uses **both** tools."),
     ("code", "app = create_app()\n"
              "client = app.test_client()\n"
              "print('health:', client.get('/health').get_json())\n"
-             "r = client.post('/ask', json={'message': 'What is 12 + 30?'})\n"
+             "r = client.post('/ask',\n"
+             "                json={'message': 'What is 12 + 30, and the price of coffee?'})\n"
              "print('ask:', r.get_json())"),
     ("md", "## 3. Run it for real (outside Colab)\n"
            "Locally, `python agent_app.py` then in another terminal:\n"

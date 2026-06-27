@@ -25,14 +25,15 @@ def build_notebook(cells, outpath, kernel="python3"):
         "nbformat": 4,
         "nbformat_minor": 5,
     }
-    for kind, text in cells:
+    for n, (kind, text) in enumerate(cells):
         src = text.split("\n")
         src = [ln + "\n" for ln in src[:-1]] + [src[-1]] if src else [""]
+        cid = f"cell{n:03d}"  # nbformat 4.5 requires a cell id
         if kind == "md":
-            nb["cells"].append({"cell_type": "markdown", "metadata": {}, "source": src})
+            nb["cells"].append({"cell_type": "markdown", "id": cid, "metadata": {}, "source": src})
         elif kind == "code":
             nb["cells"].append({
-                "cell_type": "code", "metadata": {}, "execution_count": None,
+                "cell_type": "code", "id": cid, "metadata": {}, "execution_count": None,
                 "outputs": [], "source": src,
             })
         else:

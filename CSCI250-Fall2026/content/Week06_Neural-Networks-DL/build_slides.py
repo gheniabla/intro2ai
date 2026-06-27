@@ -14,7 +14,7 @@ slides = [
         "Build & train a tiny network (PyTorch, NumPy fallback)",
         "Brief tour: vision (CNNs) + sequences (Transformers)",
         ("Framing: this is the foundation under LLMs", 1),
-        ("No assignment — absorb fundamentals before the Week 7 midterm", 1)]},
+        ("Lab: Assignment A6 (6 pts, due Sun Oct 4)", 1)]},
 
     {"type": "section", "title": "One Neuron: The Perceptron"},
     {"type": "code", "title": "A Single Neuron",
@@ -83,7 +83,7 @@ slides = [
         "Run 01_tiny_neural_net.ipynb and watch the loss fall",
         "Tweak learning rate / hidden size / epochs and observe",
         "Run 02_cnn_and_sequence_tour.ipynb",
-        "No assignment — start reviewing Weeks 1–5 for the midterm"]},
+        "Submit Assignment A6 (6 pts, due Sun Oct 4)"]},
 ]
 
 if __name__ == "__main__":

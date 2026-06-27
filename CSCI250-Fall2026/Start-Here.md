@@ -17,7 +17,7 @@ Every Monday a module opens with the **same layout** so you never have to hunt:
 2. **📖 Read** — the lecture `document.md` + slides.
 3. **💻 Notebook(s)** — runnable sample code. Cell 1 always shows a working result first ("wow in 5 minutes"); then you modify it.
 4. **✅ Practice (ungraded)** — quick self-checks so you know if it clicked *before* it's graded.
-5. **📝 Graded deliverable** — the week's assignment (A#/S#), with a rubric and a time estimate.
+5. **📝 Graded deliverable** — the week's assignment (A1–A10) or capstone milestone, with a rubric and a time estimate.
 6. **📅 Due & when** — everything is due **Sunday 11:59 PM Pacific** unless stated.
 
 Each notebook starts with a banner telling you **what you'll see, how long it takes, what it costs (free), and which key you need (if any).**
@@ -38,9 +38,9 @@ No textbook is required to purchase. Everything runs on **free tiers** and **loc
 You're **encouraged** to use AI assistants on assignments — but **you own what you submit** and must be able to explain every line. Add a one-line **"AI Use"** note to each assignment. **Exams are AI-restricted.** Full policy in the syllabus.
 
 ## 6. How you're graded
-- **60%** Assignments & Skills (weekly) · **20%** Midterm Exam (Oct 11) · **20%** Final Project (due Dec 19).
+- **60%** Assignments (A1–A10, weekly) · **20%** Midterm Exam (Oct 11) · **20%** Final Project (due Dec 19).
 - Every graded item has a **rubric** and an **exemplar** ("what an A looks like") — see **[Rubrics.md](Rubrics.md)**.
-- **Skills checks** are pass/revise: you can **revise once** if you don't pass the first time. Aim for mastery, not a one-shot.
+- **Correctness-graded assignments** are revise-once: you can **revise once** if you don't pass the first time. Aim for mastery, not a one-shot.
 
 ## 7. How to get help (please use these!)
 - **Office hours (live, optional):** Tue 5–6 PM & Sat 10–11 AM PT on Zoom (link in syllabus). Recorded for those who can't attend.

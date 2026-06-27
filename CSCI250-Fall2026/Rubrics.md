@@ -34,7 +34,7 @@ Each assignment is graded out of **6 points** on this rubric (adapted per week; 
 ---
 
 ## 3. Midterm Exam (20% of grade) — AI-restricted
-Covers Weeks 1–7 (Python, data, ML, neural-net & LLM foundations). Scope and a **practice midterm with solutions** are published in Week 7 — **no surprises**. Graded on correctness of concepts, code reading, and short hand-computations. **No AI assistance permitted.**
+Covers Weeks 1–6 (reviewed in Week 7) — Python, data, ML, and neural-network foundations. Scope and a **practice midterm with solutions** are published in Week 7 — **no surprises**. Graded on correctness of concepts, code reading, and short hand-computations. **No AI assistance permitted.**
 
 ---
 

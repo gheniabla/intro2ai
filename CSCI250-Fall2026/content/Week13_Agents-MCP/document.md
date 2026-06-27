@@ -206,7 +206,7 @@ from eval_utils import exact_match, scorecard
 cases = [{"name": "7 + 5", "tool": "add", "expected": "12"}, ...]
 rows = []
 for c in cases:
-    tool, ans = router_agent(query[c["name"]])
+    tool, ans = router_agent(QUERY[c["name"]])
     rows.append({"name": c["name"],
                  "score": int(tool == c["tool"]) + exact_match(ans, c["expected"])})
 scorecard(rows)        # prints a report card; tracks tool-choice + answer accuracy

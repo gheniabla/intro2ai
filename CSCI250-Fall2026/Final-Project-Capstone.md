@@ -47,7 +47,9 @@ Each milestone is a small graded checkpoint inside the weekly assignments — no
 
 ---
 
-## Grading rubric (100 points)
+## Grading rubric (100 points → scaled to the 20 course points)
+This 100-point rubric is what your final submission is scored against; that score is then **scaled to the 20 points** the Capstone contributes to your course grade (e.g., 90/100 → 18/20). The five milestones (M1–M5, which sum to 20 as checkpoints) are the staged path to this final submission.
+
 | Criterion | Pts | What "excellent" looks like |
 |---|---:|---|
 | **It runs** (reproducible; deploys on a free tier) | 20 | Grader opens the Space/notebook and it works first try; costs documented |
