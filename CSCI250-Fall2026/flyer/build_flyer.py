@@ -72,8 +72,7 @@ y = draw(para(
     "Artificial Intelligence is the defining technology of the decade — and generative AI has "
     "put it in everyone's hands. In this <b>project-based, beginner-friendly</b> course you'll go "
     "from the fundamentals of machine learning to <b>building and deploying your own AI "
-    "applications</b> using the same tools professionals use today. No expensive textbook and no "
-    "costly hardware — everything runs free in your browser.",
+    "applications</b> using the same tools professionals use today.",
     11.5, INK, leading=16.5), M, y, CW)
 
 # ───────────────────────── What you'll build & learn ─────────────
@@ -113,7 +112,7 @@ y = min(yl, yr)
 
 # ───────────────────────── Highlight pills ───────────────────────
 y -= 16
-pills = [("100% Online", TEAL), ("Asynchronous", NAVY), ("$0 Textbook Cost", GREEN),
+pills = [("100% Online", TEAL), ("Asynchronous", NAVY),
          ("Hands-on Projects", NAVY), ("Portfolio Capstone", TEAL)]
 PS = 10.5; padx = 13; gap = 10; ph = 22
 widths = [c.stringWidth(l, "Helvetica-Bold", PS) + 2 * padx for l, _ in pills]
